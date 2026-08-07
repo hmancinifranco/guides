@@ -293,7 +293,7 @@
             <tr><th>Bloque</th><th>Tema</th><th>Público (Negocio/Tech)</th></tr>
         </thead>
         <tbody>
-            <tr><td>1</td><td><strong>Bienvenida + Login vía EntraID</strong></td><td>Tecnología</td></tr>
+            <tr><td>1</td><td><strong>Bienvenida + Login vía IAM Identity Center</strong></td><td>Tecnología</td></tr>
             <tr><td>2</td><td><strong>Kiro IDE — Setup base</strong> (Steering, MCP, Powers)</td><td>Tecnología</td></tr>
             <tr><td>3</td><td><strong>Modos de trabajo</strong> — Vibe Coding vs Spec-Driven</td><td>Ambos</td></tr>
             <tr><td>4</td><td><strong>AI-DLC Discovery</strong> — Ideación guiada por roles</td><td>Ambos</td></tr>
@@ -379,38 +379,36 @@
 <section id="setup">
     <h2>⚙️ Configuración Paso a Paso</h2>
 
-    <h3>1. Login vía Microsoft Entra ID</h3>
+    <h3>1. Login vía AWS IAM Identity Center</h3>
     <div class="step">
         <span class="step-number">1</span>
-        <div class="step-content">Abrir Kiro (IDE o <code>https://app.kiro.dev</code>)</div>
+        <div class="step-content">Abrir Kiro y hacer click en <strong>Sign in</strong></div>
     </div>
     <div class="step">
         <span class="step-number">2</span>
-        <div class="step-content">Click en <strong>"Use your company's single sign-on"</strong></div>
+        <div class="step-content">Seleccionar <strong>AWS IAM Identity Center</strong> de las opciones de proveedor</div>
     </div>
     <div class="step">
         <span class="step-number">3</span>
-        <div class="step-content">Ingresar tu email corporativo</div>
+        <div class="step-content">Ingresar la <strong>Start URL</strong> proporcionada por tu admin o help desk</div>
     </div>
     <div class="step">
         <span class="step-number">4</span>
-        <div class="step-content">Se redirige automáticamente a Microsoft Entra ID (login habitual de Microsoft)</div>
+        <div class="step-content">Seleccionar la <strong>región de AWS</strong> correcta donde está el directorio de identidad</div>
     </div>
     <div class="step">
         <span class="step-number">5</span>
-        <div class="step-content">Autorizar los permisos solicitados → listo, ya estás dentro de Kiro</div>
+        <div class="step-content">Completar el flujo de autenticación en la ventana del browser → listo, ya estás dentro de Kiro</div>
     </div>
 
     <div class="card">
-        <div class="card-title">🔐 ¿Cómo funciona por detrás?</div>
-        <p>Kiro se integra directamente con Microsoft Entra ID como Identity Provider:</p>
+        <div class="card-title">🔐 ¿Qué necesito?</div>
+        <p>Solo dos datos que te da tu admin:</p>
         <ul>
-            <li><strong>Scopes solicitados:</strong> <code>codewhisperer:completions</code> y <code>codewhisperer:conversations</code></li>
-            <li><strong>Redirect URIs:</strong> configuradas por el admin en la app registration de Entra</li>
-            <li><strong>SCIM provisioning:</strong> sincronización automática de usuarios y grupos desde Entra</li>
-            <li><strong>Dominio verificado:</strong> el admin registró el dominio corporativo para habilitar SSO directo</li>
+            <li><strong>Start URL:</strong> la URL de tu organización en IAM Identity Center (ej: <code>https://mi-empresa.awsapps.com/start</code>)</li>
+            <li><strong>Región:</strong> la región de AWS donde está configurado el directorio (ej: <code>us-east-1</code>)</li>
         </ul>
-        <p style="margin-top: 0.5rem;"><a href="https://kiro.dev/docs/enterprise/identity-provider/microsoft-entra/" target="_blank" style="color: #58a6ff;">📖 Documentación oficial: Microsoft Entra ID setup</a></p>
+        <p style="margin-top: 0.5rem;"><a href="https://kiro.dev/docs/getting-started/authentication/" target="_blank" style="color: var(--accent-cyan);">📖 Documentación oficial: Authentication</a></p>
     </div>
 
     <h3>🗂️ Dónde vive todo: la carpeta <code>.kiro</code></h3>
