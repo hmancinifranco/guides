@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guía de Inducción Kiro</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --border: #2a2a3a;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --accent-cyan: #00d4ff;
+            --accent-green: #00e68a;
+            --accent-purple: #a855f7;
+            --accent-orange: #f97316;
+            --font-main: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            --font-mono: 'SF Mono', 'Fira Code', 'JetBrains Mono', monospace;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: var(--font-main);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            padding: 0;
+        }
+        .header {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-primary));
+            border-bottom: 1px solid var(--border);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        nav.toc {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 3rem;
+        }
+        nav.toc h2 {
+            font-size: 1rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+        nav.toc ul { list-style: none; }
+        nav.toc li { margin-bottom: 0.5rem; }
+        nav.toc a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        nav.toc a:hover { color: var(--accent-cyan); }
+        section {
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+        }
+        section:last-child { border-bottom: none; }
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--text-primary);
+        }
+        h2 .badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            padding: 0.2em 0.6em;
+            border-radius: 4px;
+            vertical-align: middle;
+            margin-left: 0.5rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-todos { background: var(--accent-cyan); color: #000; }
+        .badge-negocio { background: var(--accent-orange); color: #000; }
+        .badge-tech { background: var(--accent-purple); color: #fff; }
+        h3 {
+            font-size: 1.2rem;
+            color: var(--accent-green);
+            margin: 1.5rem 0 0.5rem;
+        }
+        p { margin-bottom: 1rem; color: var(--text-secondary); }
+        strong { color: var(--text-primary); }
+        code {
+            font-family: var(--font-mono);
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            padding: 0.15em 0.4em;
+            border-radius: 4px;
+            font-size: 0.85em;
+            color: var(--accent-cyan);
+        }
+        pre {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            overflow-x: auto;
+            margin: 1rem 0;
+            page-break-inside: avoid;
+        }
+        pre code {
+            background: none;
+            border: none;
+            padding: 0;
+            color: var(--text-primary);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            page-break-inside: avoid;
+        }
+        th, td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        th {
+            color: var(--accent-cyan);
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        td { color: var(--text-secondary); }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            page-break-inside: avoid;
+        }
+        .card-title {
+            color: var(--text-primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .flow-diagram {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin: 1.5rem 0;
+            text-align: center;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+            line-height: 2;
+        }
+        .flow-diagram .role-neg { color: var(--accent-orange); }
+        .flow-diagram .role-tech { color: var(--accent-purple); }
+        .flow-diagram .arrow { color: var(--accent-cyan); }
+        .link-card {
+            display: inline-block;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.75rem 1.2rem;
+            margin: 0.3rem;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+        .link-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-2px);
+        }
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            min-width: 28px;
+            min-height: 28px;
+            flex-shrink: 0;
+            background: var(--accent-cyan);
+            color: #000;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.8rem;
+            margin-right: 0.75rem;
+        }
+        .step {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding: 0.75rem;
+            border-radius: 8px;
+            transition: background 0.2s;
+            page-break-inside: avoid;
+        }
+        .step:hover { background: var(--bg-card); }
+        .step-content { flex: 1; min-width: 0; }
+        .step-content pre { overflow-x: auto; }
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+        }
+        @media print {
+            @page {
+                size: letter;
+                margin: 1cm 1.5cm;
+            }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            body {
+                background: var(--bg-primary) !important;
+            }
+            .container { max-width: 100%; padding: 1rem; }
+            nav.toc {
+                page-break-after: always;
+            }
+            section {
+                page-break-before: always;
+                border-bottom: none;
+                padding-bottom: 0;
+            }
+            section:first-of-type {
+                page-break-before: avoid;
+            }
+            h3 { page-break-after: avoid; }
+            .card, table, pre, .step {
+                page-break-inside: avoid;
+            }
+            pre {
+                white-space: pre-wrap;
+                word-wrap: break-word;
+            }
+            .link-card {
+                margin-bottom: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Guía de Inducción Kiro</h1>
+    <p>Facilitador: Hugo Mancini</p>
+</div>
+
+<div class="container">
+
+<nav class="toc">
+    <h2>Contenido</h2>
+    <ul>
+        <li><a href="#agenda">📋 Agenda de la Sesión</a></li>
+        <li><a href="#glosario">📖 Glosario de Términos</a></li>
+        <li><a href="#setup">⚙️ Configuración Paso a Paso</a></li>
+        <li><a href="#headless">🤖 Headless Mode (CLI en CI/CD)</a></li>
+        <li><a href="#discovery">🔍 AI-DLC Discovery (Negocio)</a></li>
+        <li><a href="#specs">📐 Spec-Driven Development (Tech)</a></li>
+        <li><a href="#superficies">🖥️ Superficies: IDE, CLI, Web</a></li>
+        <li><a href="#recursos">🔗 Recursos</a></li>
+    </ul>
+</nav>
+
+<!-- AGENDA -->
+<section id="agenda">
+    <h2>📋 Agenda de la Sesión</h2>
+    <table>
+        <thead>
+            <tr><th>Bloque</th><th>Tema</th><th>Público (Negocio/Tech)</th></tr>
+        </thead>
+        <tbody>
+            <tr><td>1</td><td><strong>Bienvenida + Login vía EntraID</strong></td><td>Tecnología</td></tr>
+            <tr><td>2</td><td><strong>Kiro IDE — Setup base</strong> (Steering, MCP, Powers)</td><td>Tecnología</td></tr>
+            <tr><td>3</td><td><strong>Modos de trabajo</strong> — Vibe Coding vs Spec-Driven</td><td>Ambos</td></tr>
+            <tr><td>4</td><td><strong>AI-DLC Discovery</strong> — Ideación guiada por roles</td><td>Ambos</td></tr>
+            <tr><td>5</td><td><strong>Desarrollo con Specs + Subagents</strong></td><td>Tecnología</td></tr>
+            <tr><td>6</td><td><strong>Kiro Web + CLI</strong> — cuándo usar cada superficie</td><td>Ambos</td></tr>
+            <tr><td>7</td><td><strong>Recursos y cierre</strong></td><td>Ambos</td></tr>
+        </tbody>
+    </table>
+</section>
+
+<!-- GLOSARIO -->
+<section id="glosario">
+    <h2>📖 Glosario de Términos</h2>
+    <p>Referencia rápida de todos los conceptos que usaremos en la sesión.</p>
+
+    <div class="card">
+        <div class="card-title">Kiro</div>
+        <p>IDE agéntico con IA: describes en lenguaje natural lo que necesitas y genera código funcional. Disponible como app de escritorio (IDE), línea de comandos (CLI) y navegador (Web).</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Vibe Coding</div>
+        <p>Modo conversacional para implementación rápida. Describes lo que quieres en un prompt y Kiro genera el código. Ideal para tareas puntuales y prototipado veloz.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Spec-Driven Development</div>
+        <p>Enfoque estructurado para features complejas. Kiro genera Requisitos → Diseño → Tareas antes de escribir código. Da control total, trazabilidad y documentación automática.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Steering</div>
+        <p>Archivos markdown en <code>.kiro/steering/</code> que dan a Kiro conocimiento persistente del proyecto: convenciones, stack tecnológico, estructura. Se cargan automáticamente en cada sesión.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">MCP (Model Context Protocol)</div>
+        <p>Estándar abierto que conecta a Kiro con herramientas externas, APIs y fuentes de datos en tiempo real. Piensa en él como un "adaptador universal" para que la IA acceda a información actualizada.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Powers</div>
+        <p>Paquetes que combinan MCP + experiencia + workflows. Se activan automáticamente por contexto. Instalas un Power y Kiro gana expertise instantáneo en esa tecnología.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Subagents</div>
+        <p>Agentes especializados que Kiro delega para ejecutar tareas en paralelo. Cada uno tiene su propio contexto y retorna solo el resultado. Requieren modo Autopilot.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Agent Hooks</div>
+        <p>Disparadores automáticos tipo "si esto, entonces aquello". Ejecutan acciones ante eventos: guardar archivos, completar tareas, iniciar sesiones. Automatizan guardrails.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Agent Skills</div>
+        <p>Formato abierto y portable de conocimiento especializado. Se cargan bajo demanda (solo cuando son relevantes) a diferencia del Steering que está siempre activo.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Custom Agents</div>
+        <p>Configuraciones JSON reutilizables que definen un agente: su prompt, herramientas, permisos y recursos. Se guardan en <code>.kiro/agents/</code> y se comparten con el equipo.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">AI-DLC Discovery</div>
+        <p>Herramienta de discovery guiado para PMs y tech leads. Reemplaza la hoja en blanco con una entrevista estructurada que produce un Vision Document y un Technical Environment Document.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">EARS (Easy Approach to Requirements Syntax)</div>
+        <p>Formato para escribir requisitos no ambiguos: <code>WHEN &lt;evento&gt; THE SYSTEM SHALL &lt;acción&gt;</code>. Asegura que cada requisito sea verificable y testeable.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Autopilot vs Supervised</div>
+        <p><strong>Autopilot:</strong> Kiro aplica cambios de forma autónoma (necesario para subagents). <strong>Supervised:</strong> muestra los cambios para que los apruebes paso a paso.</p>
+    </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup">
+    <h2>⚙️ Configuración Paso a Paso</h2>
+
+    <h3>1. Login vía Microsoft Entra ID</h3>
+    <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-content">Abrir Kiro (IDE o <code>https://app.kiro.dev</code>)</div>
+    </div>
+    <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-content">Click en <strong>"Use your company's single sign-on"</strong></div>
+    </div>
+    <div class="step">
+        <span class="step-number">3</span>
+        <div class="step-content">Ingresar tu email corporativo</div>
+    </div>
+    <div class="step">
+        <span class="step-number">4</span>
+        <div class="step-content">Se redirige automáticamente a Microsoft Entra ID (login habitual de Microsoft)</div>
+    </div>
+    <div class="step">
+        <span class="step-number">5</span>
+        <div class="step-content">Autorizar los permisos solicitados → listo, ya estás dentro de Kiro</div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">🔐 ¿Cómo funciona por detrás?</div>
+        <p>Kiro se integra directamente con Microsoft Entra ID como Identity Provider:</p>
+        <ul>
+            <li><strong>Scopes solicitados:</strong> <code>codewhisperer:completions</code> y <code>codewhisperer:conversations</code></li>
+            <li><strong>Redirect URIs:</strong> configuradas por el admin en la app registration de Entra</li>
+            <li><strong>SCIM provisioning:</strong> sincronización automática de usuarios y grupos desde Entra</li>
+            <li><strong>Dominio verificado:</strong> el admin registró el dominio corporativo para habilitar SSO directo</li>
+        </ul>
+        <p style="margin-top: 0.5rem;"><a href="https://kiro.dev/docs/enterprise/identity-provider/microsoft-entra/" target="_blank" style="color: #58a6ff;">📖 Documentación oficial: Microsoft Entra ID setup</a></p>
+    </div>
+
+    <h3>🗂️ Dónde vive todo: la carpeta <code>.kiro</code></h3>
+    <p>Todas las funcionalidades core de Kiro (steering, skills, hooks, agents, specs, MCP) se almacenan como <strong>archivos de texto plano</strong> dentro de una carpeta oculta llamada <code>.kiro</code>. Esto significa que podés inspeccionarlos, editarlos manualmente y versionarlos en Git.</p>
+
+    <p>Existen <strong>dos niveles</strong> de configuración:</p>
+
+    <table>
+        <thead>
+            <tr><th>Nivel</th><th>Ubicación</th><th>Aplica a</th></tr>
+        </thead>
+        <tbody>
+            <tr><td><strong>Proyecto (workspace)</strong></td><td><code>&lt;raíz-del-repo&gt;/.kiro/</code></td><td>Solo este proyecto. Se commitea al repo → todo el equipo lo comparte.</td></tr>
+            <tr><td><strong>Global (usuario)</strong></td><td><code>~/.kiro/</code></td><td>Todos tus proyectos. Convenciones personales o del equipo vía MDM.</td></tr>
+        </tbody>
+    </table>
+
+    <p><strong>Regla de precedencia:</strong> si existe la misma configuración en ambos niveles, el <strong>workspace gana</strong> sobre el global. Steering, Skills y Hooks se mergean (se cargan ambos); MCP y Agents con el mismo nombre → el del workspace tiene prioridad.</p>
+
+    <div class="card">
+        <div class="card-title">📁 Estructura de subcarpetas dentro de <code>.kiro/</code></div>
+        <pre><code># Nivel Proyecto (workspace) — raíz del repo
+.kiro/
+├── steering/          → Conocimiento persistente del proyecto (product.md, tech.md, structure.md)
+├── skills/            → Paquetes de instrucciones bajo demanda (SKILL.md por carpeta)
+├── hooks/             → Disparadores automáticos (archivos .json)
+├── agents/            → Custom Agents del proyecto (.json o .md)
+├── specs/             → Feature Specs y Bugfix Specs (requirements.md, design.md, tasks.md)
+└── settings/
+    └── mcp.json       → Servidores MCP configurados para este proyecto
+
+# Nivel Global (usuario) — tu home directory
+~/.kiro/
+├── steering/          → Convenciones que aplican a TODOS tus proyectos
+├── skills/            → Skills personales disponibles en cualquier workspace
+├── hooks/             → Hooks que corren siempre, en todo proyecto
+├── agents/            → Agentes disponibles globalmente
+├── powers/            → Powers instalados (se activan por contexto)
+└── settings/
+    └── mcp.json       → Servidores MCP disponibles en todos los proyectos</code></pre>
+    </div>
+
+    <div class="card">
+        <div class="card-title">💡 Tips prácticos</div>
+        <ul>
+            <li><strong>Commitear <code>.kiro/</code> al repo</strong> — así todo el equipo comparte steering, hooks, agents y skills del proyecto.</li>
+            <li><strong>Los Specs solo existen a nivel proyecto</strong> — no tiene sentido tenerlos globales.</li>
+            <li><strong>Los Powers solo se instalan a nivel global</strong> — se activan dinámicamente según el contexto de trabajo.</li>
+            <li><strong>Variable <code>KIRO_HOME</code></strong> — permite mover <code>~/.kiro</code> a otra ubicación (útil para múltiples perfiles en la misma máquina).</li>
+            <li><strong>Kiro Web y Mobile</strong> solo leen la config de proyecto (la que está commiteada). No tienen acceso al <code>~/.kiro/</code> local.</li>
+        </ul>
+    </div>
+
+    <h3>2. Configurar Steering (los 3 archivos base)</h3>
+    <p>Crear la carpeta <code>.kiro/steering/</code> en la raíz del proyecto:</p>
+    <pre><code>mkdir -p .kiro/steering</code></pre>
+
+    <p><strong>product.md</strong> — Describe qué es el producto y para quién:</p>
+    <pre><code># Product Overview
+## [Nombre del Proyecto]
+Descripción del producto, usuarios objetivo y objetivos de negocio.
+
+## Core Responsibilities
+- Responsabilidad 1
+- Responsabilidad 2</code></pre>
+
+    <p><strong>tech.md</strong> — Define el stack tecnológico:</p>
+    <pre><code># Tech Stack
+## Languages &amp; Frameworks
+- Backend: [ej: Node.js, Python, Java]
+- Frontend: [ej: React, Vue, Angular]
+- IaC: [ej: CDK, CloudFormation, Terraform]
+
+## Cloud Services
+- [Lista de servicios AWS que usan]
+
+## Conventions
+- [Convenciones de código del equipo]</code></pre>
+
+    <p><strong>structure.md</strong> — Explica la organización del repo:</p>
+    <pre><code># Project Structure
+## Directory Layout
+- src/           → código fuente
+- infrastructure/ → templates de IaC
+- tests/         → tests unitarios e integración
+- docs/          → documentación</code></pre>
+
+    <h3>3. Configurar MCP mínimos</h3>
+    <p>El ecosistema de MCP Servers para AWS tiene dos opciones principales:</p>
+
+    <div class="card">
+        <div class="card-title">AWS MCP (Toolkit) — Remoto, managed por AWS (GA)</div>
+        <p>Servidor remoto que combina acceso a APIs de AWS, documentación, Agent SOPs y CloudTrail logging. <strong>Requiere autenticación IAM</strong> (credenciales AWS configuradas). Ideal para equipos tech que ya tienen acceso programático a AWS. <a href="https://aws.amazon.com/blogs/aws/the-aws-mcp-server-is-now-generally-available/" target="_blank" style="color: var(--accent-cyan);">📖 Blog de anuncio GA</a></p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">AWS Documentation MCP Server — Local, sin autenticación ✅</div>
+        <p>Servidor local que da acceso a la documentación oficial de AWS en tiempo real. <strong>No requiere credenciales AWS</strong>, solo <code>uvx</code>. Ideal para empezar rápido y para el equipo de negocio.</p>
+    </div>
+
+    <p><strong>Para esta inducción usamos el AWS Documentation MCP Server</strong> (sin fricción de credenciales).</p>
+
+    <p><strong>Opción A — Instalar con un click:</strong></p>
+    <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-content">Ir a <a href="https://awslabs.github.io/mcp/servers/aws-documentation-mcp-server" style="color: var(--accent-cyan);" target="_blank">awslabs.github.io/mcp/servers/aws-documentation-mcp-server</a></div>
+    </div>
+    <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-content">Click en el botón <strong>"Add to Kiro"</strong> → se configura automáticamente</div>
+    </div>
+
+    <p><strong>Opción B — Configuración manual</strong> (crear <code>.kiro/settings/mcp.json</code>):</p>
+    <pre><code>{
+  "mcpServers": {
+    "awslabs.aws-documentation-mcp-server": {
+      "command": "uvx",
+      "args": ["awslabs.aws-documentation-mcp-server@latest"],
+      "env": {
+        "FASTMCP_LOG_LEVEL": "ERROR",
+        "AWS_DOCUMENTATION_PARTITION": "aws"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}</code></pre>
+
+    <p><strong>Prerequisito:</strong> instalar <code>uv</code> (incluye <code>uvx</code>):</p>
+    <pre><code>curl -LsSf https://astral.sh/uv/install.sh | sh</code></pre>
+
+    <h3>4. Instalar Powers</h3>
+    <p>Desde Kiro IDE:</p>
+    <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-content">Ir a la sección <strong>Powers</strong> en el panel lateral del IDE</div>
+    </div>
+    <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-content">Click en <strong>"Add Custom Power"</strong></div>
+    </div>
+    <div class="step">
+        <span class="step-number">3</span>
+        <div class="step-content">Elegir método de importación: <strong>URL</strong> (GitHub), <strong>Folder</strong> local, o <strong>Build your own</strong></div>
+    </div>
+    <div class="step">
+        <span class="step-number">4</span>
+        <div class="step-content">Para importar desde GitHub: pegar la URL del repositorio del Power</div>
+    </div>
+
+    <h3>5. Instalar Kiro CLI</h3>
+    <p>Ir a <a href="https://kiro.dev/" target="_blank" style="color: var(--accent-cyan);">kiro.dev</a> y descargar el binario de instalación para tu sistema operativo. Alternativamente, instalar desde la terminal:</p>
+    <pre><code>curl -fsSL https://cli.kiro.dev/install | bash</code></pre>
+    <p>Verificar instalación:</p>
+    <pre><code>kiro-cli --version</code></pre>
+</section>
+
+<!-- HEADLESS -->
+<section id="headless">
+    <h2>🤖 Headless Mode — Kiro CLI sin intervención humana <span class="badge badge-tech">Tech</span></h2>
+    <p>El modo headless permite ejecutar Kiro CLI de forma programática, sin browser ni interacción manual. Ideal para CI/CD, cron jobs, scripts de automatización y cualquier entorno donde no hay un humano sentado frente a la terminal.</p>
+
+    <h3>¿Cómo funciona?</h3>
+    <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-content"><strong>Generar un API Key</strong> — desde <a href="https://app.kiro.dev" target="_blank" style="color: var(--accent-cyan);">app.kiro.dev</a> → Account Settings</div>
+    </div>
+    <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-content"><strong>Setear la variable de entorno</strong> — <code>export KIRO_API_KEY=tu-api-key</code></div>
+    </div>
+    <div class="step">
+        <span class="step-number">3</span>
+        <div class="step-content"><strong>Ejecutar con <code>--no-interactive</code></strong> — Kiro imprime la respuesta a stdout y termina</div>
+    </div>
+
+    <p>Eso es todo. Con <code>KIRO_API_KEY</code> seteada, Kiro CLI salta el login por browser automáticamente.</p>
+
+    <h3>Ejemplo: Code Review automático en CI</h3>
+    <pre><code># En tu pipeline (GitHub Actions, GitLab CI, etc.)
+- name: Install Kiro CLI
+  run: curl -fsSL https://cli.kiro.dev/install | bash
+
+- name: Run code review
+  env:
+    KIRO_API_KEY: ${{ secrets.KIRO_API_KEY }}
+  run: |
+    kiro-cli chat --no-interactive \
+      --agent code-reviewer \
+      "Review all changes for security issues, bugs, and best practices"</code></pre>
+
+    <h3>Casos de uso</h3>
+    <table>
+        <thead><tr><th>Caso</th><th>Descripción</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Code review automatizado</strong></td><td>Revisar cada push por seguridad, bugs y best practices</td></tr>
+            <tr><td><strong>Generación de documentación</strong></td><td>Escanear código y actualizar docs en cada merge a main</td></tr>
+            <tr><td><strong>Auditoría de dependencias</strong></td><td>Detectar paquetes outdated o vulnerables</td></tr>
+            <tr><td><strong>Resúmenes de PR</strong></td><td>Generar descripciones legibles de los cambios</td></tr>
+            <tr><td><strong>Asistencia en migraciones</strong></td><td>Identificar patrones que necesitan actualizarse</td></tr>
+        </tbody>
+    </table>
+
+    <div class="card">
+        <div class="card-title">💡 El patrón es siempre el mismo</div>
+        <p>Un API key + un custom agent + un one-liner en tu CI config. Definí el agente en <code>.kiro/agents/</code>, commitealo al repo, y dejalo correr en cada push.</p>
+        <p style="margin-top: 0.5rem;"><a href="https://kiro.dev/blog/introducing-headless-mode/" target="_blank" style="color: var(--accent-cyan);">📖 Blog: Introducing Headless Mode</a> | <a href="https://kiro.dev/docs/cli/headless/" target="_blank" style="color: var(--accent-cyan);">📚 Docs: Headless Mode</a></p>
+    </div>
+</section>
+
+<!-- DISCOVERY -->
+<section id="discovery">
+    <h2>🔍 AI-DLC Discovery <span class="badge badge-todos">Ambos</span></h2>
+    <p>Herramienta de product discovery guiado que reemplaza la hoja en blanco con una entrevista estructurada por roles (negocio y técnico).</p>
+
+    <h3>¿Qué es?</h3>
+    <p>AI-DLC Discovery es una entrevista guiada que produce los documentos que el equipo de tecnología necesita para empezar a implementar. No genera código — genera <strong>claridad</strong>.</p>
+
+    <h3>¿Quién lo usa?</h3>
+    <table>
+        <thead><tr><th>Rol</th><th>Qué hace</th><th>Output</th></tr></thead>
+        <tbody>
+            <tr><td>Product Manager / Analista</td><td>Responde preguntas de negocio</td><td>Vision Document</td></tr>
+            <tr><td>Tech Lead / Arquitecto</td><td>Define stack y restricciones</td><td>Technical Environment</td></tr>
+            <tr><td>Ambos</td><td>Revisión cruzada</td><td>Open Questions</td></tr>
+        </tbody>
+    </table>
+
+    <h3>¿Cómo se usa? (con Kiro CLI o IDE)</h3>
+    <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-content"><strong>Instalar automáticamente</strong> — pegar este prompt en Kiro (CLI o IDE) y dejar que haga todo:
+            <pre><code>Set up aidlc-discovery v2 in this project.
+Do every step yourself and report back when done:
+
+1. Detect which platform you are running in:
+   Kiro, Claude Code, or Amazon Quick desktop.
+
+2. Download the matching asset from the v2.0.1 release
+   (replace &lt;platform&gt; with kiro | claude | quick):
+   https://github.com/aws-samples/
+   sample-aidlc-discovery/releases/download/
+   v2.0.1/aidlc-discovery-&lt;platform&gt;-v2.0.1.zip
+
+3. Unzip and install to the platform's location:
+   - kiro   -&gt; merge the bundle into ./.kiro/
+   - claude -&gt; merge the bundle into ./.claude/
+   - quick  -&gt; import the aidlc-discovery/ skill
+               folder through the Quick desktop UI
+               (Agents &amp; skills -&gt; Skills tab -&gt;
+               + Create -&gt; Import from file -&gt;
+               select SKILL.md).
+
+4. Confirm the install path and the invocation phrase
+   (Kiro / Quick: "start aidlc-discovery";
+    Claude Code: "/aidlc-discovery").
+
+5. Configura el archivo:
+   aidlc-discovery-rules/aidlc-discovery-rule-details/
+   common/language-handling.md
+   para que los user-facing documents e interacciones
+   sean en Español.</code></pre>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);">El agente detecta la plataforma, descarga el bundle correcto, lo instala y configura el idioma. <a href="https://github.com/aws-samples/sample-aidlc-discovery/blob/main/install.md" target="_blank" style="color: var(--accent-cyan);">📖 Instrucciones completas</a></p>
+        </div>
+    </div>
+    <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-content"><strong>Iniciar sesión de discovery</strong> — escribir <code>start aidlc-discovery</code> en el chat (funciona igual en Kiro IDE y Kiro CLI). Podés incluir la idea en el mismo mensaje:
+            <pre><code>start aidlc-discovery. Mi Proyecto: Una plataforma interna que permite a los
+empleados enviar ideas innovadoras para evaluación transparente...</code></pre>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem; color: var(--text-secondary);"><strong>Tip:</strong> podés pre-cargar contexto antes de invocar: <em>"Leé ./docs/requisitos.md primero, luego start aidlc-discovery"</em>. <a href="https://github.com/aws-samples/sample-aidlc-discovery/blob/main/how-to-use.md" target="_blank" style="color: var(--accent-cyan);">📖 Guía completa de uso</a></p>
+        </div>
+    </div>
+    <div class="step">
+        <span class="step-number">3</span>
+        <div class="step-content">Seleccionar rol (Business o Technical) y modo (conversational o batch)</div>
+    </div>
+    <div class="step">
+        <span class="step-number">4</span>
+        <div class="step-content">Responder las preguntas sección por sección</div>
+    </div>
+    <div class="step">
+        <span class="step-number">5</span>
+        <div class="step-content">Obtener los documentos en <code>Product-Definition/</code></div>
+    </div>
+
+    <div class="card">
+        <div class="card-title">💡 Tip: alimentá el discovery con fuentes existentes</div>
+        <p>No necesitás responder todo de memoria. Podés usar documentación previa o conectores MCP a sistemas como <strong>Jira</strong>, <strong>Confluence</strong>, <strong>SharePoint</strong> o cualquier otro compatible con MCP para que el agente proponga respuestas a partir de esa información. Ejemplos:</p>
+        <ul>
+            <li><em>"Leé ./docs/requisitos-negocio.pdf primero, luego start aidlc-discovery"</em></li>
+            <li><em>"Usá el MCP de Confluence para traer la página 'Arquitectura del Producto', luego start aidlc-discovery"</em></li>
+            <li><em>"Consultá los tickets del epic PROJ-123 en Jira, luego start aidlc-discovery"</em></li>
+        </ul>
+        <p>El agente pre-llena las respuestas con la información encontrada — vos solo revisás y aprobás en cada gate.</p>
+    </div>
+
+    <h3>¿Qué produce?</h3>
+    <pre><code>Product-Definition/
+├── vision-document.md          → qué construir y por qué
+├── technical-environment.md    → stack, herramientas y restricciones
+├── open-questions.md           → ambigüedades pre-declaradas
+├── state/                      → estado para retomar sesión
+├── audit/                      → log de auditoría por rol
+└── interview/                  → historial de respuestas</code></pre>
+
+    <h3>El puente con Tecnología</h3>
+    <div class="card">
+        <div class="card-title">Discovery → Specs → Código</div>
+        <p>Los documentos que produce Discovery alimentan directamente las Feature Specs que usa el equipo tech. El Vision Document se convierte en requisitos EARS, y el Technical Environment guía las decisiones de diseño.</p>
+    </div>
+</section>
+
+<!-- SPECS -->
+<section id="specs">
+    <h2>📐 Spec-Driven Development <span class="badge badge-tech">Tech</span></h2>
+    <p>Enfoque estructurado para construir features complejas con control total y trazabilidad.</p>
+
+    <h3>Tipos de Spec</h3>
+    <table>
+        <thead><tr><th>Tipo</th><th>Cuándo usarla</th><th>Punto de partida</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Feature Spec (Requirements-first)</strong></td><td>Sabes QUÉ construir</td><td>Vision Document de Discovery</td></tr>
+            <tr><td><strong>Feature Spec (Design-first)</strong></td><td>Sabes CÓMO construirlo</td><td>Arquitectura predefinida</td></tr>
+            <tr><td><strong>Bugfix Spec</strong></td><td>Sabes QUÉ está roto</td><td>Bug report</td></tr>
+        </tbody>
+    </table>
+
+    <div class="card">
+        <div class="card-title">💡 Tip: conectá Discovery con Specs</div>
+        <p>Los documentos que genera AI-DLC Discovery (<code>Product-Definition/vision-document.md</code>, <code>technical-environment.md</code>) son el input ideal para iniciar una Feature Spec. Al crear la spec, referenciá esos archivos y Kiro los usa como base para generar requisitos EARS, diseño técnico y tareas — toda la investigación previa del equipo de negocio se traduce automáticamente en un plan de implementación estructurado.</p>
+    </div>
+
+    <h3>Flujo de una Feature Spec</h3>
+    <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-content"><strong>Requisitos (EARS)</strong> — Criterios de aceptación verificables<br><code>WHEN usuario envía formulario THE SYSTEM SHALL validar campos obligatorios</code></div>
+    </div>
+    <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-content"><strong>Diseño</strong> — Arquitectura, modelos de datos, APIs, puntos de integración</div>
+    </div>
+    <div class="step">
+        <span class="step-number">3</span>
+        <div class="step-content"><strong>Tareas</strong> — Discretas, ordenadas por dependencia, ejecutables por subagents</div>
+    </div>
+    <div class="step">
+        <span class="step-number">4</span>
+        <div class="step-content"><strong>Ejecución</strong> — Kiro implementa con subagents en paralelo (modo Autopilot)</div>
+    </div>
+
+    <h3>Subagents — Trabajo en paralelo</h3>
+    <div class="card">
+        <div class="card-title">¿Qué son?</div>
+        <p>Agentes especializados que Kiro despacha para ejecutar tareas independientes en simultáneo. Cada uno tiene su propia ventana de contexto y retorna solo el resultado final.</p>
+    </div>
+    <table>
+        <thead><tr><th>Subagent</th><th>Propósito</th></tr></thead>
+        <tbody>
+            <tr><td>Context Gatherer</td><td>Explora el proyecto e identifica archivos relevantes</td></tr>
+            <tr><td>General-Purpose</td><td>Maneja subtareas bien definidas de forma autónoma</td></tr>
+            <tr><td>Custom (tu equipo)</td><td>Definidos en <code>.kiro/agents/</code> — ej: security-agent, infra-agent</td></tr>
+        </tbody>
+    </table>
+
+    <h3>Vibe vs Spec — Regla rápida</h3>
+    <div class="card">
+        <div class="card-title">¿Cuándo usar cada uno?</div>
+        <p><strong>Vibe:</strong> si lo puedes describir en 1 frase → "creame un endpoint de health check"</p>
+        <p><strong>Spec:</strong> si necesitas un párrafo o más → feature multi-archivo, sistema completo, cambio arquitectónico</p>
+    </div>
+</section>
+
+<!-- SUPERFICIES -->
+<section id="superficies">
+    <h2>🖥️ Superficies: IDE, CLI, Web</h2>
+    <p>Kiro tiene tres superficies. Usa la que mejor se adapte a tu rol y momento.</p>
+
+    <table>
+        <thead><tr><th>Superficie</th><th>Ideal para</th><th>Público sugerido</th></tr></thead>
+        <tbody>
+            <tr>
+                <td><strong>Kiro IDE</strong></td>
+                <td>Desarrollo activo local, specs, debugging visual, explorador de archivos</td>
+                <td>Tecnología</td>
+            </tr>
+            <tr>
+                <td><strong>Kiro CLI</strong></td>
+                <td>Terminal, CI/CD, custom agents, automatización, Discovery</td>
+                <td>Ambos</td>
+            </tr>
+            <tr>
+                <td><strong>Kiro Web</strong></td>
+                <td>Delegar tareas largas, sandbox en la nube, sesiones que siguen corriendo</td>
+                <td>Ambos</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Comandos clave del CLI</h3>
+    <pre><code># Iniciar chat interactivo
+kiro-cli chat
+
+# Ejecutar un prompt directo (one-shot)
+kiro-cli chat "tu prompt aquí"
+
+# Modo headless (CI/CD, scripts)
+kiro-cli chat --no-interactive "prompt"
+
+# Agregar contexto
+/context add ./src/
+
+# Ver herramientas MCP disponibles
+/tools
+
+# Ver servidores MCP
+/mcp
+
+# Usar un custom agent
+/agent mi-agente</code></pre>
+
+    <h3>Kiro Web</h3>
+    <div class="step">
+        <span class="step-number">1</span>
+        <div class="step-content">Ir a <code>https://app.kiro.dev</code></div>
+    </div>
+    <div class="step">
+        <span class="step-number">2</span>
+        <div class="step-content">Conectar repositorio GitHub o GitLab</div>
+    </div>
+    <div class="step">
+        <span class="step-number">3</span>
+        <div class="step-content">Crear sesión — se ejecuta en un sandbox aislado en la nube</div>
+    </div>
+    <div class="step">
+        <span class="step-number">4</span>
+        <div class="step-content">Las sesiones persisten aunque cierres el browser</div>
+    </div>
+</section>
+
+<!-- RECURSOS -->
+<section id="recursos">
+    <h2>🔗 Recursos</h2>
+    <p>Links de referencia para seguir aprendiendo después de la sesión.</p>
+
+    <h3>Documentación y Comunidad</h3>
+    <a href="https://kiro.dev/docs/" class="link-card" target="_blank">📚 Docs oficiales</a>
+    <a href="https://kirohub.dev/" class="link-card" target="_blank">🌐 KiroHub</a>
+    <a href="https://kiro.dev/discord/" class="link-card" target="_blank">💬 Discord</a>
+    <a href="https://kiro.dev/pricing/" class="link-card" target="_blank">💰 Pricing</a>
+    <a href="https://kiro.dev/powers/" class="link-card" target="_blank">⚡ Powers</a>
+
+    <h3>🎮 Aprender practicando</h3>
+    <p>Guías interactivas para afianzar las funciones de Kiro paso a paso, completando hitos mientras construís algo real.</p>
+    <a href="https://kiro.dev/docs/guides/learn-by-playing/" class="link-card" target="_blank">🕹️ Learn by Playing — Spirit of Kiro</a>
+    <a href="https://askkiro.info/#play" class="link-card" target="_blank">🚀 AskKiro Play — Tutorial guiado de funciones core</a>
+    <div class="card" style="margin-top: 1rem;">
+        <div class="card-title">¿Qué son?</div>
+        <ul>
+            <li><strong>Spirit of Kiro</strong> — Tutorial oficial: corregís bugs y agregás features a un videojuego, aprendiendo steering, specs, hooks y MCP en el camino (9 misiones).</li>
+            <li><strong>AskKiro Play</strong> — Guía de 9 misiones (~45 min) donde construís una app web desde cero pasando por vibe coding, steering, specs, hooks, agents, skills y MCP.</li>
+        </ul>
+        <p>Ideales para después de la inducción — permiten practicar cada concepto a su ritmo con feedback inmediato.</p>
+    </div>
+
+    <h3>Herramientas mencionadas</h3>
+    <a href="https://github.com/aws-samples/sample-aidlc-discovery" class="link-card" target="_blank">🔍 AI-DLC Discovery</a>
+    <a href="https://awslabs.github.io/mcp/servers/aws-documentation-mcp-server" class="link-card" target="_blank">🔌 AWS Documentation MCP Server (instalar con 1 click)</a>
+    <a href="https://awslabs.github.io/mcp/" class="link-card" target="_blank">📋 Catálogo completo de MCP Servers para AWS</a>
+    <a href="https://docs.astral.sh/uv/getting-started/installation/" class="link-card" target="_blank">📦 Instalar uv/uvx</a>
+
+    <h3>Descargas</h3>
+    <a href="https://kiro.dev/downloads/" class="link-card" target="_blank">⬇️ Kiro IDE</a>
+    <a href="https://kiro.dev/cli/" class="link-card" target="_blank">⬇️ Kiro CLI</a>
+    <a href="https://app.kiro.dev" class="link-card" target="_blank">🌍 Kiro Web</a>
+
+    <h3 style="page-break-before: always;">Planes de Kiro</h3>
+    <table>
+        <thead><tr><th>Plan</th><th>Precio</th><th>Créditos</th><th>Add-on</th></tr></thead>
+        <tbody>
+            <tr><td>Free</td><td>$0/mes</td><td>50 créditos</td><td>—</td></tr>
+            <tr><td>Pro</td><td>$20/mes</td><td>1,000 créditos</td><td>$0.04/crédito</td></tr>
+            <tr><td>Pro+</td><td>$40/mes</td><td>2,000 créditos</td><td>$0.04/crédito</td></tr>
+            <tr><td>Pro Max</td><td>$100/mes</td><td>5,000 créditos</td><td>$0.04/crédito</td></tr>
+            <tr><td>Power</td><td>$200/mes</td><td>10,000 créditos</td><td>$0.04/crédito</td></tr>
+        </tbody>
+    </table>
+    <p>Sin límites diarios ni semanales. Add-on credits disponibles en todos los planes pagos. Más info en <a href="https://kiro.dev/pricing/" style="color: var(--accent-cyan);">kiro.dev/pricing</a>.</p>
+</section>
+
+</div><!-- /container -->
+
+</body>
+</html>
