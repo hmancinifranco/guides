@@ -4,6 +4,48 @@
       "type": "registry",
       "disabled": false
     },
+    "aws-mcp": {
+      "type": "registry",
+      "timeout": 100000,
+      "disabled": false
+    },
+    "awslabs.aws-documentation-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
+    "awslabs.aws-pricing-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
+    "awslabs.cloudwatch-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
+    "awslabs.cloudwatch-applicationsignals-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
+    "awslabs.cloudtrail-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
+    "awslabs.prometheus-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
+    "awslabs.aws-serverless-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
+    "awslabs.aws-transform-mcp-server": {
+      "type": "registry",
+      "disabled": false,
+      "disabledTools": ["delete_workspace", "delete_job"]
+    },
+    "strands-agents-mcp-server": {
+      "type": "registry",
+      "disabled": false
+    },
     "context7": {
       "type": "registry",
       "disabled": false
@@ -12,125 +54,21 @@
       "type": "registry",
       "disabled": false
     },
-    "filesystem": {
+    "mcp-server-git": {
       "type": "registry",
       "disabled": false
+    },
+    "mcp-server-fetch": {
+      "type": "registry",
+      "disabled": false
+    },
+    "filesystem": {
+      "type": "registry",
+      "disabled": true
     },
     "chrome-devtools": {
       "type": "registry",
       "disabled": true
-    },
-    "github-mcp-server": {
-      "type": "registry",
-      "disabled": false
-    },
-    "awslabs.aws-documentation-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-documentation-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_DOCUMENTATION_PARTITION": "aws"
-      },
-      "disabled": false,
-      "autoApprove": ["search_documentation", "read_documentation"]
-    },
-    "awslabs.aws-pricing-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-pricing-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_PROFILE": "${AWS_PROFILE}",
-        "AWS_REGION": "us-east-1"
-      },
-      "disabled": false
-    },
-    "awslabs.cloudwatch-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.cloudwatch-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_PROFILE": "${AWS_PROFILE}"
-      },
-      "disabled": false
-    },
-    "awslabs.cloudwatch-applicationsignals-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.cloudwatch-applicationsignals-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_PROFILE": "${AWS_PROFILE}"
-      },
-      "disabled": false
-    },
-    "awslabs.cloudtrail-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.cloudtrail-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_PROFILE": "${AWS_PROFILE}"
-      },
-      "disabled": false
-    },
-    "awslabs.prometheus-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.prometheus-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_PROFILE": "${AWS_PROFILE}"
-      },
-      "disabled": false
-    },
-    "strands-agents-mcp-server": {
-      "command": "uvx",
-      "args": ["strands-agents-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "INFO"
-      },
-      "disabled": false
-    },
-    "awslabs.aws-serverless-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-serverless-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_PROFILE": "${AWS_PROFILE}",
-        "AWS_REGION": "us-east-1"
-      },
-      "disabled": false
-    },
-    "awslabs.aws-transform-mcp-server": {
-      "command": "uvx",
-      "args": ["awslabs.aws-transform-mcp-server@latest"],
-      "env": {
-        "FASTMCP_LOG_LEVEL": "ERROR",
-        "AWS_PROFILE": "${AWS_PROFILE}",
-        "AWS_REGION": "us-east-1"
-      },
-      "disabled": false,
-      "disabledTools": ["delete_workspace", "delete_job"]
-    },
-    "mcp-server-fetch": {
-      "command": "uvx",
-      "args": ["mcp-server-fetch@latest"],
-      "disabled": false
-    },
-    "mcp-server-git": {
-      "command": "uvx",
-      "args": ["mcp-server-git@latest"],
-      "disabled": false
-    },
-    "aws-mcp": {
-      "command": "uvx",
-      "args": [
-        "mcp-proxy-for-aws@latest",
-        "https://aws-mcp.us-east-1.api.aws/mcp",
-        "--profile", "${AWS_PROFILE}"
-      ],
-      "env": {
-        "AWS_REGION": "us-east-1"
-      },
-      "timeout": 100000,
-      "disabled": false
     }
   }
 }
