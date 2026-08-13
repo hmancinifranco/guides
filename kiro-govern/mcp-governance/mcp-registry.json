@@ -181,21 +181,6 @@
     },
     {
       "server": {
-        "name": "mcp-server-git",
-        "title": "Git",
-        "description": "Leer, buscar y manipular repositorios Git locales.",
-        "version": "latest",
-        "packages": [
-          {
-            "registryType": "pypi",
-            "identifier": "mcp-server-git",
-            "transport": { "type": "stdio" }
-          }
-        ]
-      }
-    },
-    {
-      "server": {
         "name": "filesystem",
         "title": "Filesystem",
         "description": "Operaciones de archivo acotadas a un directorio permitido. Ajustar el path permitido.",
@@ -273,21 +258,6 @@
               { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" },
               { "name": "AWS_REGION", "value": "us-east-1" }
             ]
-          }
-        ]
-      }
-    },
-    {
-      "server": {
-        "name": "mcp-server-fetch",
-        "title": "Fetch (egress HTTP)",
-        "description": "Descarga web arbitraria (Powers aws-sam y cloud-architect). Restringir por egress de red.",
-        "version": "latest",
-        "packages": [
-          {
-            "registryType": "pypi",
-            "identifier": "mcp-server-fetch",
-            "transport": { "type": "stdio" }
           }
         ]
       }

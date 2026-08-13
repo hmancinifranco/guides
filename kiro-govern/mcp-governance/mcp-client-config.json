@@ -54,14 +54,6 @@
       "type": "registry",
       "disabled": false
     },
-    "mcp-server-git": {
-      "type": "registry",
-      "disabled": false
-    },
-    "mcp-server-fetch": {
-      "type": "registry",
-      "disabled": false
-    },
     "filesystem": {
       "type": "registry",
       "disabled": true
