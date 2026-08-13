@@ -1,11 +1,27 @@
 # Manual de gobierno de MCP en Kiro
 
 > Guía de implementación para administradores. Cubre el modelo cliente/server,
-> qué controla realmente el MCP Registry, cómo cargarlo en un Kiro Profile de AWS,
-> y las buenas prácticas de seguridad. Documento genérico, no atado a un rol.
+> qué controla el MCP Registry, cómo cargarlo en un Kiro Profile de AWS y cómo
+> configurar el cliente de cada desarrollador. Documento genérico, no atado a un rol.
 
-Archivo de referencia que acompaña este manual: `mcp-registry.json` (allow-list
-recomendada, en este mismo directorio).
+Archivos de referencia en este mismo directorio:
+- `mcp-registry.json` — allow-list de referencia, lista para adaptar.
+- `mcp-client-config.json` — plantilla de configuración del cliente.
+
+### Documentación oficial
+
+| Tema | Enlace |
+|---|---|
+| Gobierno de MCP en Kiro | https://kiro.dev/docs/enterprise/governance/mcp/ |
+| MCP Registry (Kiro IDE) | https://kiro.dev/docs/mcp/registry/ |
+| Configuración de MCP en Kiro | https://kiro.dev/docs/mcp/configuration/ |
+| Anuncio de la funcionalidad | https://kiro.dev/blog/enterprise-governance-mcp-and-models/ |
+| Esquema completo del registry | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/mcp-governance.html |
+| Estándar MCP Registry (versionado) | https://modelcontextprotocol.io/registry/versioning |
+| Agent Toolkit for AWS | https://docs.aws.amazon.com/agent-toolkit/latest/userguide/ |
+| MCP servers de AWS (awslabs) | https://github.com/awslabs/mcp |
+| MCP servers de referencia | https://github.com/modelcontextprotocol/servers |
+| Catálogo de Powers de Kiro | https://github.com/kirodotdev/powers/tree/main |
 
 ---
 
@@ -34,12 +50,6 @@ El `registryType` de un server local le dice a Kiro qué lanzador usar:
 `npm` → `npx`, `pypi` → `uvx`, `oci` → `docker`. **Esos lanzadores deben estar
 preinstalados** en la máquina del desarrollador. El dev no arranca nada a mano:
 Kiro lo hace automáticamente cuando el server está permitido.
-
-**Implicancia de seguridad:** un server local corre como proceso **con los
-privilegios del usuario** (acceso a archivos, variables de entorno, secretos y
-credenciales de la sesión) y **fuera del sandbox** de Kiro. Kiro lo lanza pero no lo
-aísla. Los remotos corren en infra ajena: el riesgo se corre a "¿confío en ese
-endpoint?" y "¿qué datos le envío?".
 
 ---
 
@@ -122,25 +132,27 @@ transitorio.
 **Paso 1 — Redactar el JSON.** Allow-list pura: lo que está se permite; lo que se
 omite se deniega. (Ver §5 para el formato y `mcp-registry.json` como base.)
 
-**Paso 2 — Servir por HTTPS.** Cualquier server web: Amazon S3 (+ CloudFront),
-Apache o nginx. La URL debe ser accesible desde las máquinas de los usuarios (puede
-ser privada a la red corporativa). **Requisito:** certificado SSL válido de una CA
-de confianza. **Autofirmados no se soportan.**
+**Paso 2 — Servir por HTTPS.** Sirve cualquier server web. **Requisito:** certificado
+SSL válido de una CA de confianza (autofirmados no se soportan) y que la URL sea
+alcanzable desde las máquinas de los usuarios, aunque puede ser privada a la red
+corporativa.
 
-> ⚠️ **La URL tiene que devolver HTTP 200 sin autenticación interactiva.** Un error
-> fácil de cometer es publicar el JSON en un repositorio Git **privado**: la URL raw
-> devuelve 404 y el cliente no puede sincronizar. El síntoma es engañoso porque los
-> servers siguen funcionando un rato con la copia cacheada, y recién al siguiente
-> sync se apaga todo por *fail-closed*. Verificá siempre con:
->
-> ```bash
-> curl -s -o /dev/null -w "HTTP %{http_code}\n" "<URL_DEL_REGISTRY>"
-> ```
->
-> Repositorios Git públicos sirven para pruebas rápidas, pero para producción usá
-> S3 + CloudFront (patrón de abajo): controlás el acceso por red y tenés versionado.
+Dos formas de hacerlo, según el momento en que estés:
 
-Patrón AWS recomendado (esquema):
+**Opción rápida — URL raw de un repositorio Git público.** Es la vía más directa
+para probar el gobierno o iterar sobre el registry mientras lo definís. Publicás el
+JSON en un repo público y usás la URL raw:
+
+```
+https://raw.githubusercontent.com/<org>/<repo>/refs/heads/main/<ruta>/mcp-registry.json
+```
+
+Ventaja: cero infraestructura, y cada cambio queda versionado por Git. Limitación:
+el repositorio debe ser **público**, así que solo aplica si el contenido del registry
+no es sensible.
+
+**Opción para producción — S3 + CloudFront.** Cuando el registry pasa a ser parte de
+la operación, conviene servirlo desde infraestructura propia:
 
 ```
 Bucket S3      : privado, sin acceso publico directo, versioning ON
@@ -148,6 +160,18 @@ CloudFront     : Origin Access Control (OAC) hacia el bucket
 Certificado    : ACM sobre dominio corporativo
 Ruta publicada : https://mcp-registry.tuempresa.com/registry.json
 ```
+
+Así controlás el acceso por red, tenés versionado del objeto y un dominio propio.
+
+> ⚠️ **En cualquiera de las dos formas, la URL tiene que devolver HTTP 200 sin
+> autenticación interactiva.** El error más común es publicar el JSON en un
+> repositorio **privado**: la URL raw devuelve 404 y el cliente no puede sincronizar.
+> El síntoma es engañoso, porque los servers siguen funcionando un rato con la copia
+> cacheada y recién al siguiente sync se apaga todo por *fail-closed*. Verificá con:
+>
+> ```bash
+> curl -s -o /dev/null -w "HTTP %{http_code}\n" "<URL_DEL_REGISTRY>"
+> ```
 
 **Paso 3 — Cargar la URL en el Kiro Profile.**
 1. Kiro console → **Settings**.
@@ -231,109 +255,103 @@ las env vars son un freno débil (§3).
 
 ---
 
-## 6. Buenas prácticas de seguridad
-
-**Origen y cadena de suministro**
-- Allow-listear solo servers de fuentes confiables y revisadas (código y proveedor).
-- Fijar versiones exactas (el registry lo obliga) y, si se puede, servir paquetes
-  desde registros internos (npm/PyPI corporativos vía `registryBaseUrl`).
-
-**Credenciales y secretos**
-- Nunca commitear config con tokens. Tokens con permisos mínimos (p. ej. PAT
-  fine-grained de GitHub). Rotación periódica.
-- Preferir variables de entorno / keychains a hardcodear. En Kiro IDE solo se
-  expanden las env vars **explícitamente aprobadas** ("Mcp Approved Env Vars").
-- Permisos restrictivos en la config local: `chmod 600 ~/.kiro/settings/mcp.json`.
-
-**Menor privilegio y control de acciones**
-- Rol IAM *ReadOnly* como default para servers de AWS; escritura solo donde haga
-  falta y con rol dedicado.
-- `disabledTools` (config local) para bloquear operaciones peligrosas (ej.
-  `delete_repository`, `force_push`).
-- Auto-aprobar (config local) **solo** tools de lectura, de fuente verificada, de
-  uso frecuente y alcance limitado.
-
-**Red**
-- HTTPS para remotos, verificar TLS, restringir egress por firewall, monitorear
-  tráfico. Cuidado con servers que piden acceso de red amplio (ej. `fetch`).
-
-**Aislamiento**
-- Config a nivel workspace para servers específicos de proyecto: contiene tokens y
-  alcance por repo.
-
-**Monitoreo y respuesta**
-- Revisar MCP Logs (panel Kiro → Output → "Kiro - MCP Logs"). Auditar auto-approves.
-- Incidente: deshabilitar el server, revocar tokens, revisar actividad en los
-  servicios conectados, reportar al mantenedor.
-
-**Límite de fondo (repetir siempre):** el toggle y el registry se aplican
-**client-side** y un usuario con admin local puede eludirlos. Combinar con controles
-de endpoint (MDM/EDR), perímetros de red e IAM. No es una barrera criptográfica.
-
----
-
-## 7. Powers y su relación con el registry
+## 6. Powers y su relación con el registry
 
 Un **Power** es un plugin (estándar *Agent Plugins*) que empaqueta skills +
-conocimiento + **opcionalmente un MCP server** (`mcp.json`). Instala con un clic y
-**carga sus tools MCP dinámicamente** (solo cuando aparecen keywords relevantes),
-lo que reduce el ruido de contexto y la superficie de ataque en reposo.
+conocimiento + **opcionalmente un MCP server** (`mcp.json`). Se instala con un clic y
+carga sus tools MCP dinámicamente, solo cuando aparecen keywords relevantes.
 
-**Punto de compatibilidad:** el gobierno de MCP suprime todos los servers no
-allow-listeados, **incluidos los que un Power inyecta**. Por lo tanto, para que un
-Power funcione bajo gobierno, **el MCP server que trae adentro debe estar en el
-registry**. Regla operativa: por cada Power aprobado, mirar su `mcp.json`, extraer
-sus servers y agregarlos al registry.
+**Punto de compatibilidad:** el gobierno de MCP suprime todos los servers que no
+estén en la allow-list, **incluidos los que un Power inyecta**. Para que un Power
+funcione bajo gobierno, el MCP server que trae adentro debe estar en el registry.
 
-Mapeo verificado (Powers → servers a allow-listear):
+Regla operativa: por cada Power aprobado, revisar su `mcp.json`, extraer los servers
+que declara y agregarlos al registry.
 
-| Power | MCP servers | Paquete/endpoint real |
-|---|---|---|
-| aws-sam | aws-serverless, fetch | `awslabs.aws-serverless-mcp-server`, `mcp-server-fetch` |
-| aws-observability | cloudwatch, appsignals, cloudtrail, prometheus, aws-docs | `awslabs.cloudwatch-mcp-server`, `awslabs.cloudwatch-applicationsignals-mcp-server`, `awslabs.cloudtrail-mcp-server`, `awslabs.prometheus-mcp-server`, `awslabs.aws-documentation-mcp-server` |
-| cloud-architect | awspricing, awsknowledge, awsapi, context7, fetch | `awslabs.aws-pricing-mcp-server`, `https://knowledge-mcp.global.api.aws`, `awslabs.aws-api-mcp-server`, `@upstash/context7-mcp`, `mcp-server-fetch` |
-| aws-transform-agent-toolkit | aws-transform-agent-toolkit | `awslabs.aws-transform-mcp-server` |
-| Strands | strands | `strands-agents-mcp-server` |
+El catálogo completo de Powers, con el `mcp.json` de cada uno, está en:
+**https://github.com/kirodotdev/powers/tree/main**
 
-> **Nota:** este mapeo lista lo que cada Power declara. Nuestra allow-list no incluye
-> `mcp-server-fetch` ni `awslabs.aws-api-mcp-server`: el primero está roto respecto
-> del SDK `mcp` actual, y el segundo quedó cubierto por `aws-mcp` (Agent Toolkit),
-> cuyo `run_script` reemplaza a `call_aws`. Los Powers que dependan de ellos van a
-> funcionar con capacidades reducidas hasta que se resuelva cada caso.
+Mapeo de los Powers de uso más frecuente:
+
+| Power | MCP servers que declara |
+|---|---|
+| aws-sam | `awslabs.aws-serverless-mcp-server`, `mcp-server-fetch` |
+| aws-observability | `awslabs.cloudwatch-mcp-server`, `awslabs.cloudwatch-applicationsignals-mcp-server`, `awslabs.cloudtrail-mcp-server`, `awslabs.prometheus-mcp-server`, `awslabs.aws-documentation-mcp-server` |
+| cloud-architect | `awslabs.aws-pricing-mcp-server`, `https://knowledge-mcp.global.api.aws`, `awslabs.aws-api-mcp-server`, `@upstash/context7-mcp`, `mcp-server-fetch` |
+| aws-transform-agent-toolkit | `awslabs.aws-transform-mcp-server` |
+| Strands | `strands-agents-mcp-server` |
+
+> **Nota:** la tabla lista lo que cada Power declara, no lo que nuestra allow-list
+> incluye. `mcp-server-fetch` quedó afuera porque su release actual es incompatible
+> con el SDK `mcp` (ver §8), y `awslabs.aws-api-mcp-server` quedó cubierto por
+> `aws-mcp` del Agent Toolkit, cuyo `run_script` reemplaza a `call_aws`. Los Powers
+> que dependan de esos dos funcionan con capacidades reducidas.
 
 ---
 
-## 8. Agent Toolkit for AWS vs. MCP servers individuales
+## 7. Agent Toolkit for AWS y su lugar en el registry
 
 El **Agent Toolkit for AWS** es la oferta oficial de AWS para dar a los agentes
-(Kiro, Claude Code, Cursor, Codex…) herramientas + conocimiento + guardrails.
-Componentes: **AWS MCP Server** (server gestionado, endpoint único; docs sin auth,
-acciones con IAM), **agent skills**, **plugins** (Kiro no los necesita: se conecta
-directo) y **rules files**.
+(Kiro, Claude Code, Cursor, Codex y cualquiera que hable MCP) herramientas,
+conocimiento actualizado y guardrails. En nuestra allow-list aparece como `aws-mcp`
+y es la entrada recomendada para trabajar con AWS.
 
-Por qué es relevante para gobierno: a diferencia de un server de terceros, el AWS
-MCP Server está diseñado para control central:
-- Autenticación con tus **roles IAM** existentes (SigV4 o OAuth 2.1).
-- **CloudTrail** registra todas las llamadas; **CloudWatch** aporta métricas.
+Documentación: https://docs.aws.amazon.com/agent-toolkit/latest/userguide/
+
+**Componentes:**
+- **AWS MCP Server** — server gestionado por AWS con un endpoint único. La búsqueda
+  de documentación y el descubrimiento de skills funcionan **sin credenciales**; la
+  ejecución de acciones usa tus credenciales IAM.
+- **Agent skills** — procedimientos curados que el agente carga bajo demanda, solo
+  cuando son relevantes para la tarea.
+- **Plugins** — paquetes de instalación para Claude Code y Codex. Kiro no los
+  necesita: se conecta directo al server.
+- **Rules files** — configuración a nivel proyecto para fijar preferencias de cómo
+  el agente trabaja con AWS.
+
+**Tools que expone** (referencia:
+https://docs.aws.amazon.com/agent-toolkit/latest/userguide/understanding-mcp-server-tools.html):
+
+| Tool | Para qué | Credenciales |
+|---|---|---|
+| `aws___search_documentation` | Busca en toda la documentación de AWS, incluidas las skills | No requiere |
+| `aws___read_documentation` | Trae una página de documentación en markdown | No requiere |
+| `aws___retrieve_skill` | Recupera un procedimiento curado para un dominio | No requiere |
+| `aws___list_regions` | Lista regiones con sus identificadores | No requiere |
+| `aws___get_regional_availability` | Disponibilidad regional de servicios y features | No requiere |
+| `aws___run_script` | Ejecuta Python con acceso a las APIs de AWS en un sandbox | IAM |
+| `aws___get_presigned_url` | Genera URLs pre-firmadas de S3 | IAM |
+| `aws___get_tasks` | Consulta el estado de operaciones largas | IAM |
+
+**Por qué encaja bien en un esquema gobernado:**
+- Autentica con los **roles IAM** que ya tenés, por SigV4 o OAuth 2.1.
+- **CloudTrail** registra todas las llamadas y **CloudWatch** aporta métricas de uso.
 - Agrega automáticamente los *condition keys* `aws:ViaAWSMCPService` y
-  `aws:CalledViaAWSMCP` → podés diferenciar en IAM lo iniciado vía MCP y, p. ej.,
-  forzar read-only para todo lo que venga por ahí.
+  `aws:CalledViaAWSMCP`, así que en IAM podés distinguir lo que se originó vía MCP y
+  aplicarle políticas propias.
+- Un solo endpoint reemplaza a varios servers sueltos, lo que simplifica la
+  allow-list y el mantenimiento.
+- Soporta **múltiples perfiles AWS** en una misma sesión, útil para trabajar entre
+  cuentas sin reiniciar el server. Ver:
+  https://docs.aws.amazon.com/agent-toolkit/latest/userguide/multi-account-access.html
 
-Cuándo usar cada uno:
-- **AWS MCP Server (Agent Toolkit):** punto de acceso gobernado a AWS (leer docs +
-  ejecutar acciones bajo IAM/CloudTrail). Preferible a armar `aws-api`/`aws-serverless`
-  sueltos — la doc oficial marca a `aws-api` como **superado** por él.
-- **Servers individuales:** para lo que no es AWS o no cubre el toolkit (GitHub,
-  bases de datos, observabilidad de terceros, Playwright, filesystem, drawio…).
-- **Combinar:** publicar en el registry el AWS MCP Server (o los awslabs) + el puñado
-  de servers no-AWS aprobados, y reforzar con rules files en los proyectos.
+**Cómo combinarlo con el resto de la allow-list:**
+- `aws-mcp` cubre documentación, skills y ejecución de APIs de AWS. Es el punto de
+  entrada por defecto para tareas de AWS.
+- Los servers de **awslabs** que quedan en la lista aportan tools especializados que
+  el toolkit no reemplaza: CloudWatch tiene análisis de causa raíz, Prometheus usa
+  PromQL, `aws-serverless` maneja el ciclo de vida de SAM, `aws-transform` cubre
+  migración.
+- Los servers **no-AWS** (diagramas, documentación de librerías, filesystem) cubren
+  todo lo demás.
 
-Modelo de dos capas: **registry + Kiro Profile = "qué servers pueden existir";
-IAM + CloudTrail = "qué pueden hacer contra AWS y cómo se audita".**
+Modelo de dos capas para tener presente: **registry + Kiro Profile definen qué
+servers pueden existir; IAM y CloudTrail definen qué pueden hacer contra AWS y cómo
+queda auditado.**
 
 ---
 
-## 9. Configurar el cliente Kiro (guía rápida para el developer)
+## 8. Configurar el cliente Kiro (guía rápida para el developer)
 
 Una vez que el administrador publicó el registry y cargó la URL en el Kiro Profile,
 el developer necesita configurar su cliente. Esta sección explica cómo.
@@ -468,7 +486,7 @@ compartidos (región de la org, nivel de log, flags de seguridad).
 
 | Control | Dónde | Ejemplo |
 |---|---|---|
-| Deshabilitar un server | `"disabled": true` | Server de alto riesgo que solo se habilita bajo demanda |
+| Deshabilitar un server | `"disabled": true` | Server que solo se usa ocasionalmente y se habilita bajo demanda |
 | Bloquear tools peligrosos | `"disabledTools": [...]` | `["delete_repository", "force_push"]` en github |
 | Auto-aprobar tools de lectura | `"autoApprove": [...]` | `["search_documentation", "read_documentation"]` |
 | Timeout extendido | `"timeout": 100000` | Para servers lentos como `aws-mcp` (proxy remoto) |
@@ -523,30 +541,65 @@ kiro-govern/mcp-governance/
 
 ---
 
-## 10. Set recomendado (referencia)
+## 9. Set de referencia
 
-La allow-list de arranque está en `mcp-registry.json` (15 servers), organizada por
-riesgo:
+La allow-list de arranque está en `mcp-registry.json` y trae 15 servers ya validados,
+agrupados por lo que aportan:
 
-- **Bajo / lectura:** aws-documentation, aws-knowledge, aws-pricing, cloudwatch (x2),
-  cloudtrail, prometheus, strands, context7, drawio.
-- **Medio:** filesystem (acotado por `${ALLOWED_PATH}`).
-- **Alto (habilitar por cuenta/equipo, IAM mínimo, sin auto-approve):** aws-mcp
-  (Agent Toolkit), aws-serverless, aws-transform, chrome-devtools.
+**Punto de entrada a AWS**
+- `aws-mcp` — Agent Toolkit: documentación, skills y ejecución de APIs en un solo
+  endpoint (§7).
 
-Antes de agregar un server a la allow-list, **verificá que arranca** con el
-procedimiento de §9 (Diagnóstico). Los paquetes de la comunidad pueden quedar
-desactualizados respecto del SDK `mcp` y romperse; no tiene sentido publicar en el
-registry algo que no puede conectar.
+**Documentación y conocimiento**
+- `awslabs.aws-documentation-mcp-server` — documentación de AWS, sin credenciales.
+- `aws-knowledge-mcp-server` — conocimiento AWS gestionado, remoto y sin auth.
+- `context7` — documentación actualizada de librerías y frameworks.
+- `strands-agents-mcp-server` — documentación del framework Strands Agents.
 
-Estrategia de versión: **mantenimiento cero con `latest`**. Todos los servers
-locales usan `"version": "latest"`, así Kiro relanza siempre con la última release
-publicada sin editar el JSON. `latest` es un valor válido (no es un rango; los rangos
-sí se rechazan). Trade-off asumido: se adoptan releases nuevas automáticamente sin
-re-vetting — aceptable para este set; si algún server pasara a ser crítico, se puede
-fijar su versión exacta puntualmente. Antes de producción: ajustar el directorio de
-`filesystem` y el token de `github` (por override de usuario), y servir el archivo
-por HTTPS con CA de confianza.
+**Observabilidad y costos**
+- `awslabs.cloudwatch-mcp-server` — métricas, logs, alarmas y análisis de causa raíz.
+- `awslabs.cloudwatch-applicationsignals-mcp-server` — APM / Application Signals.
+- `awslabs.cloudtrail-mcp-server` — eventos y auditoría de CloudTrail.
+- `awslabs.prometheus-mcp-server` — consultas PromQL sobre Amazon Managed Prometheus.
+- `awslabs.aws-pricing-mcp-server` — precios y análisis de costos.
+
+**Desarrollo y despliegue**
+- `awslabs.aws-serverless-mcp-server` — ciclo de vida de SAM y aplicaciones
+  serverless.
+- `awslabs.aws-transform-mcp-server` — migración y modernización.
+
+**Propósito general**
+- `drawio` — genera y edita diagramas; los datos no salen de la máquina.
+- `filesystem` — operaciones de archivo acotadas al directorio de `${ALLOWED_PATH}`.
+- `chrome-devtools` — inspección y automatización de un Chrome vivo, para QA.
+
+### Cómo ajustar la lista
+
+Cada organización decide qué servers autoriza. Al evaluar uno, conviene mirar tres
+cosas: quién lo mantiene (oficial de AWS, del proyecto MCP, o de la comunidad), si
+expone operaciones de escritura y con qué credenciales opera. Con eso definís si va
+a la lista y con qué rol IAM.
+
+Dos recomendaciones prácticas:
+
+**Validá que arranca antes de publicarlo.** Usá el procedimiento de §8
+(Diagnóstico). Los paquetes de la comunidad a veces quedan desactualizados respecto
+del SDK `mcp` y dejan de funcionar; no tiene sentido publicar en el registry algo que
+no puede conectar.
+
+**Ajustá los placeholders antes de producción.** `filesystem` necesita que cada
+desarrollador defina `${ALLOWED_PATH}`, y los servers de AWS necesitan
+`${AWS_PROFILE}` (§8).
+
+### Estrategia de versión
+
+Todos los servers usan `"version": "latest"`, lo que elimina el mantenimiento del
+JSON: Kiro relanza siempre con la última release publicada. `latest` es un valor
+válido; lo que el esquema rechaza son los rangos (`^1.2.3`, `~1.2.3`, `1.x`).
+
+El trade-off es que se adoptan releases nuevas sin revisión previa. Para el set de
+arriba es aceptable porque son paquetes oficiales. Si algún server pasa a ser
+crítico para la operación, se le puede fijar la versión exacta como excepción.
 
 ---
 

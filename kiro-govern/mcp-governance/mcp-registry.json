@@ -202,7 +202,7 @@
       "server": {
         "name": "aws-mcp",
         "title": "AWS Agent Toolkit (MCP Server + Proxy)",
-        "description": "Docs, skills, y API execution via AWS MCP Server gestionado. IAM para escritura; docs sin auth.",
+        "description": "Agent Toolkit for AWS: documentacion, skills y ejecucion de APIs. Docs sin credenciales.",
         "version": "latest",
         "packages": [
           {
@@ -225,8 +225,8 @@
     {
       "server": {
         "name": "awslabs.aws-serverless-mcp-server",
-        "title": "AWS Serverless / SAM (alto riesgo)",
-        "description": "Ciclo de vida SAM/serverless (Power aws-sam). Read-only por defecto; IAM minimo privilegio.",
+        "title": "AWS Serverless / SAM",
+        "description": "Ciclo de vida de SAM y aplicaciones serverless. Read-only por defecto.",
         "version": "latest",
         "packages": [
           {
@@ -245,8 +245,8 @@
     {
       "server": {
         "name": "awslabs.aws-transform-mcp-server",
-        "title": "AWS Transform (alto riesgo)",
-        "description": "AWS Transform migracion/modernizacion (Power aws-transform). Requiere Web API auth + creds AWS.",
+        "title": "AWS Transform",
+        "description": "Migracion y modernizacion con AWS Transform. Requiere credenciales AWS.",
         "version": "latest",
         "packages": [
           {
@@ -265,8 +265,8 @@
     {
       "server": {
         "name": "chrome-devtools",
-        "title": "Chrome DevTools (alto riesgo)",
-        "description": "Controla e inspecciona un Chrome vivo. Solo QA/automatizacion; no auto-aprobar.",
+        "title": "Chrome DevTools",
+        "description": "Inspecciona y automatiza un Chrome vivo. Pensado para QA y automatizacion.",
         "version": "latest",
         "packages": [
           {
