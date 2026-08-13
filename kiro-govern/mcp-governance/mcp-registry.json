@@ -5,7 +5,7 @@
         "name": "awslabs.aws-documentation-mcp-server",
         "title": "AWS Documentation",
         "description": "Busqueda y lectura de documentacion oficial de AWS. Sin credenciales.",
-        "version": "1.1.30",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -39,7 +39,7 @@
         "name": "awslabs.aws-pricing-mcp-server",
         "title": "AWS Pricing",
         "description": "Precios AWS en tiempo real y analisis de costos. Requiere permiso IAM pricing:*.",
-        "version": "1.0.34",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -243,7 +243,7 @@
         "name": "awslabs.aws-serverless-mcp-server",
         "title": "AWS Serverless / SAM (alto riesgo)",
         "description": "Ciclo de vida SAM/serverless (Power aws-sam). Read-only por defecto; IAM minimo privilegio.",
-        "version": "0.1.22",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
