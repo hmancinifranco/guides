@@ -48,6 +48,7 @@
             "transport": { "type": "stdio" },
             "environmentVariables": [
               { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" },
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" },
               { "name": "AWS_REGION", "value": "us-east-1" }
             ]
           }
@@ -67,7 +68,8 @@
             "identifier": "awslabs.cloudwatch-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
-              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" }
+              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" },
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" }
             ]
           }
         ]
@@ -86,7 +88,8 @@
             "identifier": "awslabs.cloudwatch-applicationsignals-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
-              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" }
+              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" },
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" }
             ]
           }
         ]
@@ -105,7 +108,8 @@
             "identifier": "awslabs.cloudtrail-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
-              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" }
+              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" },
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" }
             ]
           }
         ]
@@ -124,7 +128,8 @@
             "identifier": "awslabs.prometheus-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
-              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" }
+              { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" },
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" }
             ]
           }
         ]
@@ -210,7 +215,7 @@
             "identifier": "@modelcontextprotocol/server-filesystem",
             "transport": { "type": "stdio" },
             "packageArguments": [
-              { "type": "positional", "value": "/path/to/allowed/directory" }
+              { "type": "positional", "value": "${ALLOWED_PATH}" }
             ]
           }
         ]
@@ -229,7 +234,9 @@
             "identifier": "mcp-proxy-for-aws",
             "transport": { "type": "stdio" },
             "packageArguments": [
-              { "type": "positional", "value": "https://aws-mcp.us-east-1.api.aws/mcp" }
+              { "type": "positional", "value": "https://aws-mcp.us-east-1.api.aws/mcp" },
+              { "type": "positional", "value": "--profile" },
+              { "type": "positional", "value": "${AWS_PROFILE}" }
             ],
             "environmentVariables": [
               { "name": "AWS_REGION", "value": "us-east-1" }
@@ -252,6 +259,7 @@
             "transport": { "type": "stdio" },
             "environmentVariables": [
               { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" },
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" },
               { "name": "AWS_REGION", "value": "us-east-1" }
             ]
           }
@@ -272,6 +280,7 @@
             "transport": { "type": "stdio" },
             "environmentVariables": [
               { "name": "FASTMCP_LOG_LEVEL", "value": "ERROR" },
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" },
               { "name": "AWS_REGION", "value": "us-east-1" }
             ]
           }
@@ -290,23 +299,6 @@
             "registryBaseUrl": "https://pypi.org",
             "identifier": "mcp-server-fetch",
             "transport": { "type": "stdio" }
-          }
-        ]
-      }
-    },
-    {
-      "server": {
-        "name": "github-mcp-server",
-        "title": "GitHub (alto riesgo)",
-        "description": "Repos, issues y PRs de GitHub. Token via header override (PAT fine-grained, minimo privilegio).",
-        "version": "latest",
-        "remotes": [
-          {
-            "type": "streamable-http",
-            "url": "https://api.githubcopilot.com/mcp/",
-            "headers": [
-              { "name": "Authorization", "value": "Bearer ${GITHUB_PERSONAL_ACCESS_TOKEN}" }
-            ]
           }
         ]
       }
