@@ -9,7 +9,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.aws-documentation-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -43,7 +42,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.aws-pricing-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -64,7 +62,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.cloudwatch-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -84,7 +81,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.cloudwatch-applicationsignals-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -104,7 +100,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.cloudtrail-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -124,7 +119,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.prometheus-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -144,7 +138,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "strands-agents-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -195,7 +188,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "mcp-server-git",
             "transport": { "type": "stdio" }
           }
@@ -230,15 +222,15 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "mcp-proxy-for-aws",
             "transport": { "type": "stdio" },
             "packageArguments": [
               { "type": "positional", "value": "https://aws-mcp.us-east-1.api.aws/mcp" },
-              { "type": "positional", "value": "--profile" },
-              { "type": "positional", "value": "${AWS_PROFILE}" }
+              { "type": "positional", "value": "--metadata" },
+              { "type": "positional", "value": "AWS_REGION=us-east-1" }
             ],
             "environmentVariables": [
+              { "name": "AWS_PROFILE", "value": "${AWS_PROFILE}" },
               { "name": "AWS_REGION", "value": "us-east-1" }
             ]
           }
@@ -254,7 +246,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.aws-serverless-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -275,7 +266,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "awslabs.aws-transform-mcp-server",
             "transport": { "type": "stdio" },
             "environmentVariables": [
@@ -296,7 +286,6 @@
         "packages": [
           {
             "registryType": "pypi",
-            "registryBaseUrl": "https://pypi.org",
             "identifier": "mcp-server-fetch",
             "transport": { "type": "stdio" }
           }
