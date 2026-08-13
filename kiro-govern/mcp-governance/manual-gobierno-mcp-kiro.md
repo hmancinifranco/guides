@@ -534,10 +534,9 @@ paquete o en sus dependencias.
 
 ```
 kiro-govern/mcp-governance/
-├── mcp-registry.json          ← allow-list (publicar por HTTPS)
-├── mcp-client-config.json     ← template para .kiro/settings/mcp.json
-├── manual-gobierno-mcp-kiro.md        ← este manual
-└── playbook-kiro-registry-implementacion.md  ← playbook operativo
+├── manual-gobierno-mcp-kiro.md   ← este manual
+├── mcp-registry.json             ← lista de referencia (publicar por HTTPS)
+└── mcp-client-config.json        ← plantilla para .kiro/settings/mcp.json
 ```
 
 ---
