@@ -58,16 +58,29 @@ Kiro lo hace automáticamente cuando el server está permitido.
   contiene la **lista blanca (allow-list)** de MCP servers autorizados. Su formato
   es un subconjunto del estándar *MCP registry standard v0.1*. No es un servicio que
   se instale: es un archivo que se redacta, valida y sirve por HTTPS.
-- **Kiro Profile:** la abstracción de gestión que define y aplica los ajustes
-  administrativos a los usuarios enterprise en **una cuenta AWS + una región**
-  (una sola por cuenta/región). Se administra desde la **Kiro console**.
-- Los profiles pueden ser de **nivel organización** o de **nivel cuenta**, y **el de
-  cuenta prevalece** sobre el de organización. Patrón típico: denegar/limitar por
-  defecto en la organización y habilitar con allow-list para cuentas concretas.
+- **Kiro Profile:** el objeto de configuración administrativa que se crea para los
+  usuarios enterprise de Kiro. Se administra desde la consola y lleva los dos
+  atributos de gobierno de MCP: el **toggle MCP on/off** y la **URL del MCP Registry**.
+  Los clientes Kiro que autentican contra ese profile descargan esa política y la
+  aplican de forma obligatoria.
 
-El Kiro Profile lleva dos atributos de gobierno de MCP: un **toggle MCP on/off** y
-una **URL de MCP Registry**. Los clientes Kiro que autentican contra ese profile
-descargan y **obligan** esa política.
+### Nivel organización vs. nivel cuenta
+
+Kiro enterprise se apoya en AWS Organizations e IAM Identity Center. En una
+organización de AWS hay una **cuenta de gestión** (management account, la dueña de la
+organización) y varias **cuentas miembro** (member accounts). El Kiro Profile puede
+existir en dos niveles:
+
+- **Nivel organización:** el profile se define en la cuenta de gestión y actúa como
+  política **por defecto** para toda la organización.
+- **Nivel cuenta:** una cuenta miembro define su propio profile, que **prevalece**
+  sobre el de la organización para los usuarios de esa cuenta.
+
+Esto permite el patrón "denegar por defecto, permitir por excepción": en la cuenta de
+gestión se deja MCP apagado o con una lista mínima, y las cuentas de los equipos que
+lo necesitan definen su propio profile con la allow-list que les corresponde. La
+[documentación oficial](https://kiro.dev/docs/enterprise/governance/mcp/) lo resume
+así: las políticas se fijan a nivel organización o se sobrescriben por cuenta.
 
 **Alcance:** el gobierno de MCP aplica solo a usuarios que autentican con una
 **identidad corporativa**: AWS IAM Identity Center, Okta o Microsoft Entra ID.
@@ -177,9 +190,9 @@ Así controlas el acceso por red, tienes versionado del objeto y un dominio prop
 
 La URL se cifra en tránsito y en reposo.
 
-**Jerarquía org/cuenta:** para "denegar por defecto, permitir por excepción",
-configura el profile de organización restrictivo y crea profiles de **cuenta** con
-MCP On + su registry para los equipos que lo necesiten (el de cuenta prevalece).
+Para aplicar el patrón "denegar por defecto, permitir por excepción", este
+mismo paso se hace en la cuenta de gestión (política de organización) y en las cuentas
+de los equipos que necesiten su propia allow-list, según el modelo de niveles de §2.
 
 ### Ciclo de sincronización (operativa)
 
