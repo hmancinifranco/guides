@@ -365,48 +365,98 @@ el developer necesita configurar su cliente. Esta sección explica cómo.
 | `npx` (viene con Node.js) | `brew install node` o [nodejs.org](https://nodejs.org/) | Todos los `registryType: "npm"` |
 | `docker` (opcional) | [docker.com](https://www.docker.com/products/docker-desktop/) | Solo si hay `registryType: "oci"` |
 
-### Archivo de configuración
+### Dónde vive la configuración
 
-El archivo del cliente es `.kiro/settings/mcp.json` (a nivel workspace) o
-`~/.kiro/settings/mcp.json` (global). Usá el template `mcp-client-config.json`
-de este repo como base.
+El archivo del cliente es `.kiro/settings/mcp.json`. Existe en dos alcances:
 
-### Tipos de entrada en el mcp.json del cliente
+| Alcance | Ruta | Cuándo usarlo |
+|---|---|---|
+| **User** (global) | `~/.kiro/settings/mcp.json` | Servers que querés en todos tus proyectos |
+| **Workspace** | `<proyecto>/.kiro/settings/mcp.json` | Servers específicos de un proyecto |
 
-**Servers remotos y npm** — usar referencia al registry:
+### Cómo se ve una entrada
+
+Con el registry activo, cada entrada solo necesita el nombre del server y una
+referencia al registry:
 
 ```json
 {
-  "server-name": {
+  "awslabs.aws-documentation-mcp-server": {
     "type": "registry",
     "disabled": false
   }
 }
 ```
 
-Kiro descarga la definición completa del registry (URL, headers, paquete, args).
-El developer no necesita saber los detalles — solo el `name`.
+`"type": "registry"` le dice a Kiro que traiga la definición completa desde el
+registry: el paquete, la versión, los argumentos y las variables de entorno base. El
+developer no necesita conocer esos detalles ni mantenerlos, y aplica igual para
+servers locales (`pypi`, `npm`) y remotos.
 
-**Servers pypi (uvx)** — usar configuración explícita:
+La key del JSON debe coincidir **exactamente** con el `name` del server en el
+registry. Si no coincide, el gobierno lo trata como un server no autorizado y lo
+suprime.
 
-```json
-{
-  "awslabs.aws-documentation-mcp-server": {
-    "command": "uvx",
-    "args": ["awslabs.aws-documentation-mcp-server@latest"],
-    "env": {
-      "FASTMCP_LOG_LEVEL": "ERROR",
-      "AWS_DOCUMENTATION_PARTITION": "aws"
-    },
-    "disabled": false
-  }
-}
-```
+Sobre esa base se pueden agregar los ajustes personales que el registry no define
+(credenciales, timeout, tools excluidos), como se explica más abajo.
 
-> **Nota:** los servers pypi se configuran con `"command": "uvx"` explícito y el
-> identifier con `@latest` para mantenimiento cero. El `name` (key del JSON) debe
-> coincidir exactamente con el `name` del server en el registry para que el
-> governance lo acepte.
+---
+
+### Dos formas de activar los servers
+
+Kiro ofrece dos caminos para el mismo resultado. Conviene conocer los dos: el visual
+sirve para explorar qué hay disponible, y el archivo sirve para estandarizar un equipo.
+
+| | Vía visual | Vía archivo |
+|---|---|---|
+| Cómo | Panel MCP Servers de Kiro | Editar `mcp.json` a mano |
+| Ventaja | Ves el catálogo con descripciones, sin escribir JSON | Reproducible: se comparte el archivo y todos quedan igual |
+| Ideal para | Explorar, arrancar, activar algo puntual | Onboarding de equipo, versionar la config en el repo |
+
+#### Vía visual — desde el panel de Kiro
+
+**Paso 1.** Abrí el panel **MCP SERVERS** y hacé clic en el ícono de instalar
+(el de la nube con la flecha).
+
+![Panel MCP Servers con el botón de instalar](img/mcp-registry-a.png)
+
+**Paso 2.** Kiro abre el selector con **los servers del registry, y solo esos**. Cada
+entrada muestra el nombre, el identificador y la descripción que definió el
+administrador. Los que todavía no instalaste aparecen como *Available*.
+
+![Selector de servers del registry](img/mcp-registry-b.png)
+
+**Paso 3.** Marcá los que querés. Podés usar el buscador para filtrar, o el checkbox
+de la izquierda de la barra de búsqueda para seleccionar todos. El contador de la
+derecha muestra cuántos llevás. Cuando termines, **OK**.
+
+![Servers seleccionados en el selector](img/mcp-registry-c.png)
+
+**Paso 4.** Kiro pregunta dónde guardar la configuración: **User** (global, aplica a
+todos tus proyectos) o **Workspace** (solo este proyecto).
+
+![Selección de alcance User o Workspace](img/mcp-registry-d.png)
+
+**Paso 5.** Kiro escribe el `mcp.json` correspondiente y arranca los servers. En el
+panel los vas viendo pasar a *Connecting...* y luego a *Connected* con un check verde.
+La primera vez tarda más, porque `uvx` y `npx` descargan los paquetes.
+
+![Servers conectando en el panel](img/mcp-registry-f.png)
+
+Si alguno queda en *Connection Failed*, revisá la sección de diagnóstico de más abajo;
+la causa más común es una variable de entorno sin definir.
+
+#### Vía archivo — con la plantilla
+
+Copiá el contenido de `mcp-client-config.json` en tu `.kiro/settings/mcp.json` y
+guardá. Kiro detecta el cambio y levanta los servers, sin pasar por el selector.
+
+Esta es la vía recomendada para un equipo: el archivo se versiona en el repositorio
+del proyecto y todos arrancan con la misma configuración, incluidos los ajustes de
+`disabled`, `disabledTools` y `timeout` que ya vengan definidos.
+
+Las dos vías escriben el mismo archivo, así que se pueden combinar: activar por el
+panel para probar, y después copiar el resultado a la plantilla del equipo.
 
 ### Credenciales: el patrón placeholder + variable de entorno
 
@@ -536,7 +586,8 @@ paquete o en sus dependencias.
 kiro-govern/mcp-governance/
 ├── manual-gobierno-mcp-kiro.md   ← este manual
 ├── mcp-registry.json             ← lista de referencia (publicar por HTTPS)
-└── mcp-client-config.json        ← plantilla para .kiro/settings/mcp.json
+├── mcp-client-config.json        ← plantilla para .kiro/settings/mcp.json
+└── img/                          ← capturas del flujo de activación
 ```
 
 ---
