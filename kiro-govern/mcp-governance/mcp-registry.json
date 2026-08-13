@@ -25,7 +25,7 @@
         "name": "aws-knowledge-mcp-server",
         "title": "AWS Knowledge",
         "description": "Conocimiento AWS gestionado (docs, Well-Architected, CDK, Strands). Remoto, sin auth.",
-        "version": "1.0.0",
+        "version": "latest",
         "remotes": [
           {
             "type": "streamable-http",
@@ -59,7 +59,7 @@
         "name": "awslabs.cloudwatch-mcp-server",
         "title": "Amazon CloudWatch",
         "description": "Metricas, logs, alarmas y RCA de CloudWatch. Recomendado con rol IAM ReadOnly.",
-        "version": "0.1.8",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -78,7 +78,7 @@
         "name": "awslabs.cloudwatch-applicationsignals-mcp-server",
         "title": "CloudWatch Application Signals",
         "description": "APM / Application Signals de CloudWatch. Recomendado con rol IAM ReadOnly.",
-        "version": "0.1.40",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -97,7 +97,7 @@
         "name": "awslabs.cloudtrail-mcp-server",
         "title": "AWS CloudTrail",
         "description": "Consulta de eventos y auditoria de seguridad en CloudTrail. Rol IAM ReadOnly.",
-        "version": "0.0.18",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -116,7 +116,7 @@
         "name": "awslabs.prometheus-mcp-server",
         "title": "Amazon Managed Prometheus",
         "description": "Consulta de metricas via Amazon Managed Prometheus (AMP). Rol IAM ReadOnly.",
-        "version": "0.2.20",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -135,7 +135,7 @@
         "name": "strands-agents-mcp-server",
         "title": "Strands Agents",
         "description": "Documentacion y herramientas del framework Strands Agents (respaldo del Power Strands).",
-        "version": "0.2.9",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -154,7 +154,7 @@
         "name": "context7",
         "title": "Context7",
         "description": "Documentacion de codigo actualizada de librerias/frameworks (respaldo del Power cloud-architect).",
-        "version": "4.0.2",
+        "version": "latest",
         "packages": [
           {
             "registryType": "npm",
@@ -170,7 +170,7 @@
         "name": "drawio",
         "title": "draw.io diagrams",
         "description": "Genera y edita diagramas draw.io (variante local, datos no salen de la maquina).",
-        "version": "1.5.0",
+        "version": "latest",
         "packages": [
           {
             "registryType": "npm",
@@ -186,7 +186,7 @@
         "name": "mcp-server-git",
         "title": "Git",
         "description": "Leer, buscar y manipular repositorios Git locales.",
-        "version": "2026.7.10",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -202,7 +202,7 @@
         "name": "filesystem",
         "title": "Filesystem",
         "description": "Operaciones de archivo acotadas a un directorio permitido. Ajustar el path permitido.",
-        "version": "2026.7.10",
+        "version": "latest",
         "packages": [
           {
             "registryType": "npm",
@@ -221,7 +221,7 @@
         "name": "aws-mcp",
         "title": "AWS Agent Toolkit (MCP Server + Proxy)",
         "description": "Docs, skills, y API execution via AWS MCP Server gestionado. IAM para escritura; docs sin auth.",
-        "version": "1.6.3",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -263,7 +263,7 @@
         "name": "awslabs.aws-transform-mcp-server",
         "title": "AWS Transform (alto riesgo)",
         "description": "AWS Transform migracion/modernizacion (Power aws-transform). Requiere Web API auth + creds AWS.",
-        "version": "0.1.11",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -283,7 +283,7 @@
         "name": "mcp-server-fetch",
         "title": "Fetch (egress HTTP)",
         "description": "Descarga web arbitraria (Powers aws-sam y cloud-architect). Restringir por egress de red.",
-        "version": "2026.7.10",
+        "version": "latest",
         "packages": [
           {
             "registryType": "pypi",
@@ -299,7 +299,7 @@
         "name": "github-mcp-server",
         "title": "GitHub (alto riesgo)",
         "description": "Repos, issues y PRs de GitHub. Token via header override (PAT fine-grained, minimo privilegio).",
-        "version": "1.0.0",
+        "version": "latest",
         "remotes": [
           {
             "type": "streamable-http",
@@ -316,7 +316,7 @@
         "name": "chrome-devtools",
         "title": "Chrome DevTools (alto riesgo)",
         "description": "Controla e inspecciona un Chrome vivo. Solo QA/automatizacion; no auto-aprobar.",
-        "version": "1.7.0",
+        "version": "latest",
         "packages": [
           {
             "registryType": "npm",
