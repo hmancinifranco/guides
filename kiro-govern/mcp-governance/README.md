@@ -54,7 +54,7 @@ relanza siempre con la última release publicada.
 
 ## Cómo usarlo
 
-**1. Adaptar la lista.** Partí de `mcp-registry.json` y ajustá qué servers autoriza tu
+**1. Adaptar la lista.** Toma como base `mcp-registry.json` y ajusta qué servers autoriza tu
 organización.
 
 **2. Publicar por HTTPS.** Dos opciones según el momento:
@@ -67,7 +67,7 @@ https://raw.githubusercontent.com/<org>/<repo>/refs/heads/main/<ruta>/mcp-regist
 https://mcp-registry.tuempresa.com/registry.json
 ```
 
-Verificá que devuelva 200 sin autenticación interactiva:
+Verifica que devuelva 200 sin autenticación interactiva:
 
 ```bash
 curl -s -o /dev/null -w "HTTP %{http_code}\n" "<URL_DEL_REGISTRY>"

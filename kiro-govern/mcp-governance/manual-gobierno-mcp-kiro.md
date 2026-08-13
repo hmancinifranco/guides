@@ -54,7 +54,7 @@ Kiro lo hace automáticamente cuando el server está permitido.
 
 ## 2. Qué es el MCP Registry y el Kiro Profile
 
-- **MCP Registry (en gobierno de Kiro):** un **archivo JSON** que publicás y que
+- **MCP Registry (en gobierno de Kiro):** un **archivo JSON** que publicas y que
   contiene la **lista blanca (allow-list)** de MCP servers autorizados. Su formato
   es un subconjunto del estándar *MCP registry standard v0.1*. No es un servicio que
   se instale: es un archivo que se redacta, valida y sirve por HTTPS.
@@ -137,8 +137,8 @@ corporativa.
 Dos formas de hacerlo, según el momento en que estés:
 
 **Opción rápida — URL raw de un repositorio Git público.** Es la vía más directa
-para probar el gobierno o iterar sobre el registry mientras lo definís. Publicás el
-JSON en un repo público y usás la URL raw:
+para probar el gobierno o iterar sobre el registry mientras lo defines. Publicas el
+JSON en un repo público y usas la URL raw:
 
 ```
 https://raw.githubusercontent.com/<org>/<repo>/refs/heads/main/<ruta>/mcp-registry.json
@@ -158,13 +158,13 @@ Certificado    : ACM sobre dominio corporativo
 Ruta publicada : https://mcp-registry.tuempresa.com/registry.json
 ```
 
-Así controlás el acceso por red, tenés versionado del objeto y un dominio propio.
+Así controlas el acceso por red, tienes versionado del objeto y un dominio propio.
 
 > ⚠️ **En cualquiera de las dos formas, la URL tiene que devolver HTTP 200 sin
 > autenticación interactiva.** El error más común es publicar el JSON en un
 > repositorio **privado**: la URL raw devuelve 404 y el cliente no puede sincronizar.
 > El error tarda en manifestarse: los servers siguen funcionando con la copia cacheada
-> y recién al siguiente sync se apaga todo por *fail-closed*. Verificá con:
+> y recién al siguiente sync se apaga todo por *fail-closed*. Verifica con:
 >
 > ```bash
 > curl -s -o /dev/null -w "HTTP %{http_code}\n" "<URL_DEL_REGISTRY>"
@@ -178,7 +178,7 @@ Así controlás el acceso por red, tenés versionado del objeto y un dominio pro
 La URL se cifra en tránsito y en reposo.
 
 **Jerarquía org/cuenta:** para "denegar por defecto, permitir por excepción",
-configurá el profile de organización restrictivo y creá profiles de **cuenta** con
+configura el profile de organización restrictivo y crea profiles de **cuenta** con
 MCP On + su registry para los equipos que lo necesiten (el de cuenta prevalece).
 
 ### Ciclo de sincronización (operativa)
@@ -190,7 +190,7 @@ Kiro descarga el registry **al arrancar y cada 24 h**. En cada sync:
   con la versión del registry**.
 
 Implicancia: **revocar = quitar del JSON** (se propaga en ≤24 h sin tocar máquinas);
-pero un error se propaga igual de rápido → versioná el archivo y controlá cambios.
+pero un error se propaga igual de rápido → versiona el archivo y controla cambios.
 
 ---
 
@@ -333,10 +333,10 @@ https://docs.aws.amazon.com/agent-toolkit/latest/userguide/understanding-mcp-ser
 | `aws___get_tasks` | Consulta el estado de operaciones largas | IAM |
 
 **Por qué encaja bien en un esquema gobernado:**
-- Autentica con los **roles IAM** que ya tenés, por SigV4 o OAuth 2.1.
+- Autentica con los **roles IAM** que ya tienes, por SigV4 o OAuth 2.1.
 - **CloudTrail** registra todas las llamadas y **CloudWatch** aporta métricas de uso.
 - Agrega automáticamente los *condition keys* `aws:ViaAWSMCPService` y
-  `aws:CalledViaAWSMCP`, así que en IAM podés distinguir lo que se originó vía MCP y
+  `aws:CalledViaAWSMCP`, así que en IAM puedes distinguir lo que se originó vía MCP y
   aplicarle políticas propias.
 - Un solo endpoint reemplaza a varios servers sueltos, lo que simplifica la
   allow-list y el mantenimiento.
@@ -367,7 +367,7 @@ el developer necesita configurar su cliente. Esta sección explica cómo.
 
 ### Prerequisitos en la máquina del developer
 
-| Lanzador | Instalar si no lo tenés | Para qué servers |
+| Lanzador | Instalar si no lo tienes | Para qué servers |
 |---|---|---|
 | `uvx` (viene con `uv`) | `brew install uv` o [guía oficial](https://docs.astral.sh/uv/getting-started/installation/) | Todos los `registryType: "pypi"` |
 | `npx` (viene con Node.js) | `brew install node` o [nodejs.org](https://nodejs.org/) | Todos los `registryType: "npm"` |
@@ -379,7 +379,7 @@ El archivo del cliente es `.kiro/settings/mcp.json`. Existe en dos alcances:
 
 | Alcance | Ruta | Cuándo usarlo |
 |---|---|---|
-| **User** (global) | `~/.kiro/settings/mcp.json` | Servers que querés en todos tus proyectos |
+| **User** (global) | `~/.kiro/settings/mcp.json` | Servers que quieres en todos tus proyectos |
 | **Workspace** | `<proyecto>/.kiro/settings/mcp.json` | Servers específicos de un proyecto |
 
 ### Cómo se ve una entrada
@@ -423,7 +423,7 @@ sirve para explorar qué hay disponible, y el archivo sirve para estandarizar un
 
 #### Vía visual — desde el panel de Kiro
 
-**Paso 1.** Abrí el panel **MCP SERVERS** y hacé clic en el ícono de instalar
+**Paso 1.** Abre el panel **MCP SERVERS** y haz clic en el ícono de instalar
 (el de la nube con la flecha).
 
 ![Panel MCP Servers con el botón de instalar](img/mcp-registry-a.png)
@@ -434,9 +434,9 @@ administrador. Los que todavía no instalaste aparecen como *Available*.
 
 ![Selector de servers del registry](img/mcp-registry-b.png)
 
-**Paso 3.** Marcá los que querés. Podés usar el buscador para filtrar, o el checkbox
+**Paso 3.** Marca los que quieres. Puedes usar el buscador para filtrar, o el checkbox
 de la izquierda de la barra de búsqueda para seleccionar todos. El contador de la
-derecha muestra cuántos llevás. Cuando termines, **OK**.
+derecha muestra cuántos llevas. Cuando termines, **OK**.
 
 ![Servers seleccionados en el selector](img/mcp-registry-c.png)
 
@@ -451,13 +451,13 @@ La primera vez tarda más, porque `uvx` y `npx` descargan los paquetes.
 
 ![Servers conectando en el panel](img/mcp-registry-e.png)
 
-Si alguno queda en *Connection Failed*, revisá la sección de diagnóstico de más abajo;
+Si alguno queda en *Connection Failed*, revisa la sección de diagnóstico de más abajo;
 la causa más común es una variable de entorno sin definir.
 
 #### Vía archivo — con la plantilla
 
-Copiá el contenido de `mcp-client-config.json` en tu `.kiro/settings/mcp.json` y
-guardá. Kiro detecta el cambio y levanta los servers, sin pasar por el selector.
+Copia el contenido de `mcp-client-config.json` en tu `.kiro/settings/mcp.json` y
+guarda. Kiro detecta el cambio y levanta los servers, sin pasar por el selector.
 
 Esta es la vía recomendada para un equipo: el archivo se versiona en el repositorio
 del proyecto y todos arrancan con la misma configuración, incluidos los ajustes de
@@ -472,7 +472,7 @@ Este es el punto que más confusión genera, así que vale explicarlo completo.
 
 **El problema:** el registry es **uno solo para toda la organización**, pero cada
 developer tiene un **perfil IAM distinto** (`hmancini+genia-admin`, `juan-readonly`,
-etc.). No podés hardcodear un perfil en el registry.
+etc.). No puedes hardcodear un perfil en el registry.
 
 **La solución:** el registry declara un **placeholder** `${VAR}` y cada developer
 define esa variable en **su** shell. Kiro la expande al lanzar el server.
@@ -499,8 +499,8 @@ export AWS_PROFILE=mi-perfil-readonly
 echo 'export AWS_PROFILE=mi-perfil-readonly' >> ~/.zshrc
 ```
 
-> ⚠️ **Reiniciá Kiro después de definir la variable.** Kiro hereda el entorno del
-> proceso que lo lanzó; si exportás la variable en una terminal con Kiro ya abierto,
+> ⚠️ **Reinicia Kiro después de definir la variable.** Kiro hereda el entorno del
+> proceso que lo lanzó; si exportas la variable en una terminal con Kiro ya abierto,
 > el IDE no la ve.
 
 **Cómo verificar que está definida:**
@@ -552,7 +552,7 @@ compartidos (región de la org, nivel de log, flags de seguridad).
 
 ### Verificar la conexión
 
-1. Abrí el panel **MCP Servers** en Kiro (icono en la barra lateral).
+1. Abre el panel **MCP Servers** en Kiro (icono en la barra lateral).
 2. Cada server debería mostrar **Connected** (✔) o **Connection Failed** (✖).
 3. Para más detalle: Command Palette → `Kiro: Show MCP Logs`.
 4. Test rápido: preguntale a Kiro *"¿Qué regiones de AWS hay disponibles?"* — si
@@ -561,7 +561,7 @@ compartidos (región de la org, nivel de log, flags de seguridad).
 ### Diagnóstico de `Connection closed`
 
 Si un server local muestra `MCP error -32000: Connection closed`, significa que el
-proceso arrancó y **murió antes de completar el handshake**. Revisá en este orden:
+proceso arrancó y **murió antes de completar el handshake**. Revisa en este orden:
 
 | # | Revisar | Cómo |
 |---|---|---|
@@ -581,7 +581,7 @@ Si devuelve un JSON con `"result"` y `serverInfo`, el server está sano y el pro
 es de configuración. Si devuelve un traceback de Python, el problema está en el
 paquete o en sus dependencias.
 
-Si todos los servers `pypi` fallan a la vez, revisá el `registryBaseUrl` de esas
+Si todos los servers `pypi` fallan a la vez, revisa el `registryBaseUrl` de esas
 entradas en el registry: es la causa más común y está explicada en §5.
 
 ---
@@ -622,17 +622,17 @@ agrupados por lo que aportan:
 
 Cada organización decide qué servers autoriza. Al evaluar uno, conviene mirar tres
 cosas: quién lo mantiene (oficial de AWS, del proyecto MCP, o de la comunidad), si
-expone operaciones de escritura y con qué credenciales opera. Con eso definís si va
+expone operaciones de escritura y con qué credenciales opera. Con eso defines si va
 a la lista y con qué rol IAM.
 
 Dos recomendaciones prácticas:
 
-**Validá que arranca antes de publicarlo.** Usá el procedimiento de §8
+**Valida que arranca antes de publicarlo.** Usa el procedimiento de §8
 (Diagnóstico). Los paquetes de la comunidad a veces quedan desactualizados respecto
 del SDK `mcp` y dejan de funcionar; no tiene sentido publicar en el registry algo que
 no puede conectar.
 
-**Ajustá los placeholders antes de producción.** `filesystem` necesita que cada
+**Ajusta los placeholders antes de producción.** `filesystem` necesita que cada
 desarrollador defina `${ALLOWED_PATH}`, y los servers de AWS necesitan
 `${AWS_PROFILE}` (§8).
 
