@@ -218,19 +218,21 @@
     },
     {
       "server": {
-        "name": "awslabs.aws-api-mcp-server",
-        "title": "AWS API (alto riesgo)",
-        "description": "Ejecuta AWS CLI (Power cloud-architect/awsapi). READ_OPERATIONS_ONLY baseline; IAM primario.",
-        "version": "1.5.1",
+        "name": "aws-mcp",
+        "title": "AWS Agent Toolkit (MCP Server + Proxy)",
+        "description": "Docs, skills, y API execution via AWS MCP Server gestionado. IAM para escritura; docs sin auth.",
+        "version": "1.6.3",
         "packages": [
           {
             "registryType": "pypi",
             "registryBaseUrl": "https://pypi.org",
-            "identifier": "awslabs.aws-api-mcp-server",
+            "identifier": "mcp-proxy-for-aws",
             "transport": { "type": "stdio" },
+            "packageArguments": [
+              { "type": "positional", "value": "https://aws-mcp.us-east-1.api.aws/mcp" }
+            ],
             "environmentVariables": [
-              { "name": "AWS_REGION", "value": "us-east-1" },
-              { "name": "READ_OPERATIONS_ONLY", "value": "true" }
+              { "name": "AWS_REGION", "value": "us-east-1" }
             ]
           }
         ]
