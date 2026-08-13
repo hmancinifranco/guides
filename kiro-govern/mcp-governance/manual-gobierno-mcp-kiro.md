@@ -106,10 +106,11 @@ permite, un selector grueso de "modo"). No es un panel de permisos por acción. 
 permiso por acción real lo pone IAM o el scope del token.
 
 **Argumento vs. variable de entorno — la diferencia que importa:**
-- Un freno puesto por **argumento** (ej. ausencia de `--allow-write`) el usuario
-  **no lo puede revertir** desde su config → robusto.
-- Un freno puesto por **env var** (ej. `READ_OPERATIONS_ONLY=true`) el usuario
-  **sí lo puede pisar** → débil; ahí el candado duro es IAM.
+- Un límite puesto por **argumento** (ej. omitir `--allow-write`) el usuario no lo
+  puede cambiar desde su config, porque los argumentos del registry son read-only.
+- Un límite puesto por **variable de entorno** (ej. `READ_OPERATIONS_ONLY=true`) el
+  usuario lo puede sobrescribir, ya que las env vars locales tienen precedencia. En
+  ese caso el permiso efectivo lo termina definiendo IAM.
 
 ---
 
@@ -487,9 +488,9 @@ compartidos (región de la org, nivel de log, flags de seguridad).
 | Control | Dónde | Ejemplo |
 |---|---|---|
 | Deshabilitar un server | `"disabled": true` | Server que solo se usa ocasionalmente y se habilita bajo demanda |
-| Bloquear tools peligrosos | `"disabledTools": [...]` | `["delete_repository", "force_push"]` en github |
+| Excluir tools puntuales | `"disabledTools": [...]` | `["delete_workspace", "delete_job"]` en `aws-transform` |
 | Auto-aprobar tools de lectura | `"autoApprove": [...]` | `["search_documentation", "read_documentation"]` |
-| Timeout extendido | `"timeout": 100000` | Para servers lentos como `aws-mcp` (proxy remoto) |
+| Timeout extendido | `"timeout": 100000` | Para servers que arrancan más lento, como `aws-mcp` |
 
 ### Verificar la conexión
 
