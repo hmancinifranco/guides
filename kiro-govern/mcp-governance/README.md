@@ -11,10 +11,9 @@ Registry de Kiro.
 
 ## El problema
 
-Cuando un equipo adopta MCP, cada desarrollador conecta los servers que quiere.
-Funciona bien al principio, pero a escala aparecen dos necesidades: saber qué
-herramientas se están usando y definir un set común para que todos trabajen con lo
-mismo.
+Por defecto cada desarrollador conecta los MCP servers que quiere. A escala eso
+dificulta dos cosas: saber qué herramientas se están usando en la organización y
+mantener un set común entre todos.
 
 Kiro lo resuelve con el **MCP Registry**: un archivo JSON con la lista de servers
 autorizados, publicado por HTTPS y cargado en el Kiro Profile. Lo que está en la lista

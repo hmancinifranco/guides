@@ -8,8 +8,8 @@ Compendio de guías prácticas sobre Kiro, MCP y desarrollo asistido por agentes
 ![Agents](https://img.shields.io/badge/Agents-6741D9?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-3DA639?style=for-the-badge)
 
-Cada guía sale de una implementación real, así que además del procedimiento documenta
-los puntos donde la configuración se traba y cómo resolverlos.
+Cada guía incluye el procedimiento de configuración, los archivos de ejemplo y los
+errores más comunes con su solución.
 
 ---
 

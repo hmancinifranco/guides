@@ -163,8 +163,8 @@ Así controlás el acceso por red, tenés versionado del objeto y un dominio pro
 > ⚠️ **En cualquiera de las dos formas, la URL tiene que devolver HTTP 200 sin
 > autenticación interactiva.** El error más común es publicar el JSON en un
 > repositorio **privado**: la URL raw devuelve 404 y el cliente no puede sincronizar.
-> El síntoma es engañoso, porque los servers siguen funcionando un rato con la copia
-> cacheada y recién al siguiente sync se apaga todo por *fail-closed*. Verificá con:
+> El error tarda en manifestarse: los servers siguen funcionando con la copia cacheada
+> y recién al siguiente sync se apaga todo por *fail-closed*. Verificá con:
 >
 > ```bash
 > curl -s -o /dev/null -w "HTTP %{http_code}\n" "<URL_DEL_REGISTRY>"
