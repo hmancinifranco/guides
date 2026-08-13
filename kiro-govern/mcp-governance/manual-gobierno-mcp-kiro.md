@@ -1,12 +1,11 @@
 # Manual de gobierno de MCP en Kiro
 
-> Guía de implementación para administradores. Cubre el modelo cliente/server,
-> qué controla el MCP Registry, cómo cargarlo en un Kiro Profile de AWS y cómo
-> configurar el cliente de cada desarrollador. Documento genérico, no atado a un rol.
+> Guía de implementación. Cubre el modelo cliente/server, qué controla el MCP
+> Registry, cómo publicarlo y cargarlo en un Kiro Profile, y cómo configura su cliente
+> cada desarrollador.
 
-Archivos de referencia en este mismo directorio:
-- `mcp-registry.json` — allow-list de referencia, lista para adaptar.
-- `mcp-client-config.json` — plantilla de configuración del cliente.
+Archivos que acompañan a este manual, en el mismo directorio: `mcp-registry.json`
+(lista de referencia) y `mcp-client-config.json` (plantilla del cliente).
 
 ### Documentación oficial
 
@@ -77,40 +76,37 @@ organización. Habilitar la autenticación corporativa es prerrequisito del gobi
 
 ---
 
-## 3. Cuánta granularidad de control da realmente el registry
+## 3. Qué controla el registry y qué no
 
-Punto clave y frecuentemente malinterpretado: **el registry controla a nivel
-*server*, no a nivel *acción/tool*.**
+El registry actúa a nivel de **server**, no de acción individual. Es útil tenerlo
+claro desde el principio para no esperar de él algo que no hace.
 
-| Nivel de control | ¿En el registry? | Robustez |
+| Nivel de control | ¿En el registry? | Quién puede cambiarlo |
 |---|---|---|
-| Prender/apagar un server entero | Sí, total (está = permitido; no está = bloqueado) | Fuerte (el usuario no puede sumar servers fuera de la lista) |
-| Fijar la versión que corre | Sí | Fuerte |
-| Limitar el server con un **argumento** nativo (`packageArguments`) | Solo si el server expone ese flag | Fuerte (los args del registry son read-only para el usuario) |
-| Limitar el server con una **variable de entorno** | Solo si el server la honra | **Débil** (las env vars del usuario sobrescriben las del registry) |
-| Habilitar/deshabilitar **tools individuales** | **No existe en el registry** | — |
+| Autorizar o excluir un server entero | Sí | Solo el administrador |
+| Fijar la versión que corre | Sí | Solo el administrador |
+| Argumentos de arranque (`packageArguments`) | Sí, si el server expone el flag | Solo el administrador |
+| Variables de entorno base | Sí | El developer puede sobrescribirlas |
+| Habilitar tools individuales | No existe en el registry | El developer, desde su config |
 
-El control fino de acciones vive en **tres capas fuera del "server on/off"**:
+De ahí salen dos consecuencias prácticas:
 
-1. **Flags/env del propio server** (cuando existen): p. ej. omitir `--allow-write`
-   deja `aws-serverless` en read-only; fijar el directorio permitido acota
-   `filesystem`. Es capacidad del server, no universal.
-2. **IAM (para AWS) o el scope del token (para SaaS):** el control de acciones
-   **real y el único robusto**. Un rol *ReadOnly* bloquea toda escritura sin importar
-   qué flag tenga el server o qué edite el usuario.
-3. **`disabledTools` / `autoApprove` por tool:** existen, pero **solo en la config
-   local del cliente**, que es del usuario y **no se gobierna centralmente**.
+**Los argumentos son firmes, las variables de entorno no.** Los `packageArguments`
+del registry son read-only para el developer, así que un límite puesto por argumento
+se mantiene. Por ejemplo, `aws-serverless` opera en modo lectura mientras no reciba
+`--allow-write`, y como el registry no lo incluye, el developer no puede activarlo. En
+cambio las variables de entorno locales tienen precedencia sobre las del registry, así
+que si un server acepta un modo restringido por variable, el developer podría
+cambiarlo.
 
-**Regla mental:** el registry es un *interruptor por server* (y, si el server lo
-permite, un selector grueso de "modo"). No es un panel de permisos por acción. El
-permiso por acción real lo pone IAM o el scope del token.
+**El permiso efectivo sobre AWS lo define IAM.** El registry decide qué servers
+existen; el rol IAM con el que corre cada developer decide qué puede hacer contra la
+cuenta. Un rol de solo lectura bloquea cualquier escritura sin importar cómo esté
+configurado el server. Las dos capas se complementan y conviene definirlas juntas.
 
-**Argumento vs. variable de entorno — la diferencia que importa:**
-- Un límite puesto por **argumento** (ej. omitir `--allow-write`) el usuario no lo
-  puede cambiar desde su config, porque los argumentos del registry son read-only.
-- Un límite puesto por **variable de entorno** (ej. `READ_OPERATIONS_ONLY=true`) el
-  usuario lo puede sobrescribir, ya que las env vars locales tienen precedencia. En
-  ese caso el permiso efectivo lo termina definiendo IAM.
+El control por tool existe (`disabledTools`, `autoApprove`), pero vive en la config
+local del cliente, no en el registry. Sirve para que un equipo acote su propio uso, no
+para imponer política desde la organización.
 
 ---
 
@@ -200,11 +196,16 @@ pero un error se propaga igual de rápido → versioná el archivo y controlá c
 
 ## 5. Formato del registry
 
-Estructura: raíz `{ "servers": [ { "server": {...} } ] }`. Campos obligatorios de
-cada `server`: `name`, `description`, `version`. `name` con patrón
-`^[a-zA-Z0-9._-]+$` (3–200). `description` ≤ 100 caracteres. `version` debe ser
-concreta: **los rangos se rechazan** (`^1.2.3`, `~1.2.3`, `>=1.2.3`, `1.x`).
-Cada server lleva **o** `packages` (local) **o** `remotes` (remoto), máximo 1 entrada.
+La raíz es `{ "servers": [ { "server": {...} } ] }`. Cada `server` requiere `name`,
+`description` y `version`, y lleva **o** `packages` (local) **o** `remotes` (remoto),
+con una sola entrada.
+
+| Campo | Regla |
+|---|---|
+| `name` | Patrón `^[a-zA-Z0-9._-]+$`, entre 3 y 200 caracteres, único en el archivo |
+| `title` | Opcional, hasta 100 caracteres |
+| `description` | Hasta 100 caracteres |
+| `version` | Cualquier string sin rangos. `latest` es válido; `^1.2.3`, `~1.2.3`, `>=1.2.3` y `1.x` se rechazan |
 
 **Server local (stdio):**
 
@@ -214,11 +215,10 @@ Cada server lleva **o** `packages` (local) **o** `remotes` (remoto), máximo 1 e
     "name": "awslabs.aws-documentation-mcp-server",
     "title": "AWS Documentation",
     "description": "Busqueda y lectura de documentacion oficial de AWS.",
-    "version": "1.0.0",
+    "version": "latest",
     "packages": [
       {
         "registryType": "pypi",
-        "registryBaseUrl": "https://pypi.org",
         "identifier": "awslabs.aws-documentation-mcp-server",
         "transport": { "type": "stdio" },
         "environmentVariables": [
@@ -238,7 +238,7 @@ Cada server lleva **o** `packages` (local) **o** `remotes` (remoto), máximo 1 e
     "name": "aws-knowledge-mcp-server",
     "title": "AWS Knowledge",
     "description": "Conocimiento AWS gestionado. Remoto, sin auth.",
-    "version": "1.0.0",
+    "version": "latest",
     "remotes": [
       { "type": "streamable-http", "url": "https://knowledge-mcp.global.api.aws" }
     ]
@@ -246,13 +246,21 @@ Cada server lleva **o** `packages` (local) **o** `remotes` (remoto), máximo 1 e
 }
 ```
 
-**Qué puede sobrescribir el usuario** (aunque los parámetros del registry son
-read-only): variables de entorno adicionales (locales), headers HTTP adicionales
-(remotos), timeout, scope (Global/Workspace/Agente) y los trust permissions de las
-tools. Las env vars/headers del usuario **sobrescriben** las del registry — por eso
-las env vars son un freno débil (§3).
+> **Sobre `registryBaseUrl`:** es un campo opcional para apuntar a un registro de
+> paquetes propio. En entradas `pypi` conviene **omitirlo**, como en el ejemplo de
+> arriba. El valor `https://pypi.org` parece correcto pero es el sitio web, no el
+> índice de paquetes PEP 503 (`https://pypi.org/simple/`), y si el cliente lo usa como
+> índice el server no arranca. Para `npm` sí es válido declarar
+> `https://registry.npmjs.org`.
 
-**Lanzadores requeridos en la máquina:** `npm`→`npx`, `pypi`→`uvx`, `oci`→`docker`.
+**Qué puede ajustar el developer.** Los parámetros del registry son read-only, pero
+sobre ellos puede agregar variables de entorno propias, headers HTTP en servers
+remotos, timeout, alcance (global o workspace) y permisos de las tools. Las variables
+de entorno y los headers que define el developer tienen precedencia sobre los del
+registry, que es lo que permite inyectar credenciales personales (§8).
+
+**Lanzadores requeridos en la máquina:** `npm` usa `npx`, `pypi` usa `uvx` y `oci`
+usa `docker`.
 
 ---
 
@@ -352,7 +360,7 @@ queda auditado.**
 
 ---
 
-## 8. Configurar el cliente Kiro (guía rápida para el developer)
+## 8. Configurar el cliente Kiro
 
 Una vez que el administrador publicó el registry y cargó la URL en el Kiro Profile,
 el developer necesita configurar su cliente. Esta sección explica cómo.
@@ -441,7 +449,7 @@ todos tus proyectos) o **Workspace** (solo este proyecto).
 panel los vas viendo pasar a *Connecting...* y luego a *Connected* con un check verde.
 La primera vez tarda más, porque `uvx` y `npx` descargan los paquetes.
 
-![Servers conectando en el panel](img/mcp-registry-f.png)
+![Servers conectando en el panel](img/mcp-registry-e.png)
 
 Si alguno queda en *Connection Failed*, revisá la sección de diagnóstico de más abajo;
 la causa más común es una variable de entorno sin definir.
@@ -573,22 +581,8 @@ Si devuelve un JSON con `"result"` y `serverInfo`, el server está sano y el pro
 es de configuración. Si devuelve un traceback de Python, el problema está en el
 paquete o en sus dependencias.
 
-> **Nota sobre `registryBaseUrl`:** este campo es **opcional** y conviene omitirlo en
-> entradas `pypi`. El valor `https://pypi.org` es el sitio web, **no** el índice de
-> paquetes PEP 503 (que sería `https://pypi.org/simple/`), y si el cliente lo usa
-> como índice, `uvx` no resuelve ningún paquete y el server muere al arrancar.
-> Omitiéndolo, el lanzador usa su índice por defecto, que es lo correcto. Para `npm`
-> sí es válido declarar `https://registry.npmjs.org`.
-
-### Estructura de archivos de referencia
-
-```
-kiro-govern/mcp-governance/
-├── manual-gobierno-mcp-kiro.md   ← este manual
-├── mcp-registry.json             ← lista de referencia (publicar por HTTPS)
-├── mcp-client-config.json        ← plantilla para .kiro/settings/mcp.json
-└── img/                          ← capturas del flujo de activación
-```
+Si todos los servers `pypi` fallan a la vez, revisá el `registryBaseUrl` de esas
+entradas en el registry: es la causa más común y está explicada en §5.
 
 ---
 
@@ -645,18 +639,21 @@ desarrollador defina `${ALLOWED_PATH}`, y los servers de AWS necesitan
 ### Estrategia de versión
 
 Todos los servers usan `"version": "latest"`, lo que elimina el mantenimiento del
-JSON: Kiro relanza siempre con la última release publicada. `latest` es un valor
-válido; lo que el esquema rechaza son los rangos (`^1.2.3`, `~1.2.3`, `1.x`).
+JSON: Kiro relanza siempre con la última release publicada.
 
-El trade-off es que se adoptan releases nuevas sin revisión previa. Para el set de
-arriba es aceptable porque son paquetes oficiales. Si algún server pasa a ser
-crítico para la operación, se le puede fijar la versión exacta como excepción.
+El trade-off es que se adoptan releases nuevas sin revisión previa. Para este set es
+aceptable porque son paquetes oficiales. Si algún server pasa a ser crítico para la
+operación, se le puede fijar la versión exacta como excepción.
 
 ---
 
-## Anexo — Comportamientos a recordar
+## Anexo — Para tener presente
 
-- **Fail-closed** ante falla de la API de gobierno (MCP se apaga).
-- **Refresco cada 24 h** + al arrancar; revocar = quitar del JSON.
-- **Enforcement client-side** → combinar con IAM, endpoint y red.
-- **Builder ID / social** no quedan gobernados a nivel organización.
+- El registry se descarga al arrancar Kiro y se refresca cada 24 h.
+- Revocar un server es quitarlo del JSON; se propaga en el siguiente sync sin tocar
+  las máquinas de los developers.
+- Si el cliente no alcanza la API de gobierno, MCP queda deshabilitado (*fail-closed*).
+- El gobierno se aplica del lado del cliente y se complementa con IAM, que define el
+  permiso efectivo sobre AWS.
+- Los usuarios con Builder ID o login social no quedan alcanzados por el gobierno de
+  la organización.
