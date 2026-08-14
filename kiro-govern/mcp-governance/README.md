@@ -104,7 +104,6 @@ El detalle de cada paso, con capturas del flujo de activación, está en el
 | Gobierno de MCP en Kiro | https://kiro.dev/docs/enterprise/governance/mcp/ |
 | MCP Registry (Kiro IDE) | https://kiro.dev/docs/mcp/registry/ |
 | Anuncio de la funcionalidad | https://kiro.dev/blog/enterprise-governance-mcp-and-models/ |
-| Esquema completo del registry | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/mcp-governance.html |
 | Agent Toolkit for AWS | https://docs.aws.amazon.com/agent-toolkit/latest/userguide/ |
 | MCP servers de AWS | https://github.com/awslabs/mcp |
 | Catálogo de Powers de Kiro | https://github.com/kirodotdev/powers/tree/main |

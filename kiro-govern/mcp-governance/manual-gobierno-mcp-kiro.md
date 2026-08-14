@@ -15,7 +15,6 @@ Archivos que acompañan a este manual, en el mismo directorio: `mcp-registry.jso
 | MCP Registry (Kiro IDE) | https://kiro.dev/docs/mcp/registry/ |
 | Configuración de MCP en Kiro | https://kiro.dev/docs/mcp/configuration/ |
 | Anuncio de la funcionalidad | https://kiro.dev/blog/enterprise-governance-mcp-and-models/ |
-| Esquema completo del registry | https://docs.aws.amazon.com/amazonq/latest/qdeveloper-ug/mcp-governance.html |
 | Estándar MCP Registry (versionado) | https://modelcontextprotocol.io/registry/versioning |
 | Agent Toolkit for AWS | https://docs.aws.amazon.com/agent-toolkit/latest/userguide/ |
 | MCP servers de AWS (awslabs) | https://github.com/awslabs/mcp |
