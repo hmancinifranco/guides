@@ -18,6 +18,7 @@ errores más comunes con su solución.
 | Guía | De qué trata |
 |---|---|
 | [Gobierno de MCP en Kiro](./kiro-govern/mcp-governance/) | Definir un set común de MCP servers para toda la organización con el MCP Registry. Incluye manual, lista de referencia con 15 servers validados y plantilla de configuración del cliente. |
+| [Hardening de seguridad en Kiro](./kiro-hardening/) | Set base reutilizable de seguridad/postura de código para Kiro con modelo de capas (prevención always-on, revisión manual, auditoría on-demand y barreras opcionales). Incluye steering, skill de revisión, checklist ejecutable y ejemplos de gate de CI. |
 | [Inducción a Kiro](./kiro-induccion/) | Primeros pasos con Kiro: glosario, setup, AI-DLC Discovery, Specs y CLI. [Ver online](https://hmancinifranco.github.io/guides/kiro-induccion/) |
 
 ---
@@ -32,6 +33,7 @@ leen directamente desde GitHub; las que están en HTML se publican en GitHub Pag
 guides/
 ├── kiro-govern/
 │   └── mcp-governance/     Gobierno de MCP en Kiro
+├── kiro-hardening/         Hardening de seguridad en Kiro
 ├── kiro-induccion/         Inducción a Kiro
 ├── LICENSE
 └── README.md

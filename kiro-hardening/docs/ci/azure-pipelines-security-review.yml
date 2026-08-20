@@ -1,0 +1,54 @@
+# Gate de seguridad en CI — ejemplo Azure DevOps Pipelines (opcional).
+#
+# Equivalente a .github/workflows/security-review.yml pero para Azure DevOps.
+# Corre en Pull Requests hacia main/develop y falla si hay hallazgos BLOCKING.
+# Configura la validacion de PR (branch policy) para que este pipeline sea
+# requerido. Ajusta la instalacion/autenticacion de Kiro CLI a tu entorno.
+
+trigger: none
+
+pr:
+  branches:
+    include:
+      - main
+      - develop
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+    fetchDepth: 0   # historial completo para el diff
+
+  - script: |
+      git diff "origin/$(System.PullRequest.TargetBranchName)...HEAD" > pr-diff.txt
+    displayName: Get PR diff
+
+  # Ajusta este paso a como instalas/autenticas Kiro CLI en tu organizacion.
+  - script: |
+      kiro-cli chat --non-interactive --prompt "
+      Eres un revisor de seguridad. Revisa el siguiente diff contra
+      docs/security-validation.md. Para cada item afectado reporta PASS, FAIL o N/A
+      (con archivo, linea y fix en los FAIL) y clasifica cada FAIL como BLOCKING o
+      ADVISORY. Al final imprime exactamente una linea:
+      SECURITY_REVIEW_PASSED  (si no hay FAIL BLOCKING)
+      SECURITY_REVIEW_FAILED  (si hay algun FAIL BLOCKING)
+
+      Diff:
+      $(cat pr-diff.txt)
+      " > security-review.txt
+    displayName: Run Kiro security review
+
+  - script: |
+      if grep -q "SECURITY_REVIEW_FAILED" security-review.txt; then
+        echo "##vso[task.logissue type=error]La revision de seguridad fallo."
+        cat security-review.txt
+        exit 1
+      fi
+      echo "Revision de seguridad superada."
+      cat security-review.txt
+    displayName: Check result
+
+  - publish: security-review.txt
+    artifact: security-review
+    condition: always()

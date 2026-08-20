@@ -1,0 +1,44 @@
+# Gate de seguridad en CI — ejemplo GitLab CI (opcional).
+#
+# Equivalente a .github/workflows/security-review.yml pero para GitLab.
+# Copia este job a tu .gitlab-ci.yml (o inclúyelo) y ajusta la instalación de
+# Kiro CLI a tu entorno. Corre en cada Merge Request y falla si hay hallazgos
+# BLOCKING (SECURITY_REVIEW_FAILED).
+
+security-review:
+  stage: test
+  image: ubuntu:latest
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  variables:
+    GIT_DEPTH: "0"   # historial completo para poder hacer diff contra la rama destino
+  script:
+    - apt-get update && apt-get install -y git grep
+    - git fetch origin "$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"
+    - git diff "origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME"...HEAD > pr-diff.txt
+    # Ajusta este bloque a como instalas/autenticas Kiro CLI en tu organizacion.
+    - |
+      kiro-cli chat --non-interactive --prompt "
+      Eres un revisor de seguridad. Revisa el siguiente diff contra
+      docs/security-validation.md. Para cada item afectado reporta PASS, FAIL o N/A
+      (con archivo, linea y fix en los FAIL) y clasifica cada FAIL como BLOCKING o
+      ADVISORY. Al final imprime exactamente una linea:
+      SECURITY_REVIEW_PASSED  (si no hay FAIL BLOCKING)
+      SECURITY_REVIEW_FAILED  (si hay algun FAIL BLOCKING)
+
+      Diff:
+      $(cat pr-diff.txt)
+      " > security-review.txt
+    - |
+      if grep -q "SECURITY_REVIEW_FAILED" security-review.txt; then
+        echo "La revision de seguridad fallo. Ver hallazgos:"
+        cat security-review.txt
+        exit 1
+      fi
+      echo "Revision de seguridad superada."
+      cat security-review.txt
+  artifacts:
+    when: always
+    paths:
+      - security-review.txt
+    expire_in: 1 week

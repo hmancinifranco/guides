@@ -1,0 +1,27 @@
+# --- Secretos y entorno — NUNCA commitear ---
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.keystore
+*.jks
+id_rsa
+id_dsa
+id_ecdsa
+id_ed25519
+credentials.json
+service-account*.json
+*.secret
+secrets.*
+
+# Credenciales de proveedores cloud
+.aws/credentials
+.azure/
+gcloud-service-key.json
+
+# --- Artefactos de la revisión de seguridad ---
+pr-diff.txt
+security-review.txt

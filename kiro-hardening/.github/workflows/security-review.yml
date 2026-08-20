@@ -1,0 +1,91 @@
+# Gate de seguridad en CI — GitHub Actions con Kiro CLI en headless mode.
+#
+# Basado en el modo headless de Kiro CLI:
+#   https://kiro.dev/blog/introducing-headless-mode/
+#
+# Cómo funciona headless mode: generas una API key desde tu cuenta y la guardas
+# como secret del repo (KIRO_API_KEY). Con esa variable de entorno presente, Kiro
+# CLI se salta el login por navegador y corre de forma desatendida en CI.
+#
+# Setup (una vez):
+#   1) Genera la API key en la configuración de tu cuenta de Kiro.
+#   2) Repo -> Settings -> Secrets and variables -> Actions -> New repository secret
+#      con nombre KIRO_API_KEY.
+#   3) (Recomendado) Activa branch protection en main: si alguien puede hacer push
+#      directo a main, podría modificar este workflow o la config del agente y
+#      saltarse la revisión.
+#
+# Corre sobre el diff de cada PR y falla si hay hallazgos BLOCKING
+# (SECURITY_REVIEW_FAILED), publicando el informe como comentario del PR.
+
+name: Security Review
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  security-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install Kiro CLI
+        # Instala la CLI igual que en cualquier máquina Linux/macOS (ver el blog).
+        run: |
+          curl -fsSL https://cli.kiro.dev/install | bash
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Get PR diff
+        run: git diff "origin/${{ github.base_ref }}...HEAD" > /tmp/pr-diff.txt
+
+      - name: Run Kiro security review (headless)
+        env:
+          # Con esta variable presente, Kiro CLI corre sin login por navegador.
+          KIRO_API_KEY: ${{ secrets.KIRO_API_KEY }}
+        # --no-interactive imprime la respuesta en stdout y termina (ideal para CI).
+        # Ajusta el subcomando/flags a tu versión de Kiro CLI si difiere.
+        run: |
+          kiro-cli chat --no-interactive --prompt "
+          Eres un revisor de seguridad. Revisa el siguiente diff contra
+          docs/security-validation.md. Para cada item afectado por el diff reporta:
+          - PASS: requisito satisfecho
+          - FAIL: requisito violado (incluye archivo, linea y fix)
+          - N/A: no aplica a este cambio
+          Clasifica cada FAIL como BLOCKING o ADVISORY.
+          Al final imprime exactamente una de estas lineas:
+          SECURITY_REVIEW_PASSED  (si no hay FAIL de tipo BLOCKING)
+          SECURITY_REVIEW_FAILED  (si hay algun FAIL BLOCKING)
+
+          Diff:
+          $(cat /tmp/pr-diff.txt)
+          " > /tmp/security-review.txt
+
+      - name: Check result
+        run: |
+          if grep -q "SECURITY_REVIEW_FAILED" /tmp/security-review.txt; then
+            echo "::error::La revision de seguridad fallo. Ver hallazgos abajo."
+            cat /tmp/security-review.txt
+            exit 1
+          fi
+          echo "Revision de seguridad superada."
+          cat /tmp/security-review.txt
+
+      - name: Post review as PR comment
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const review = fs.readFileSync('/tmp/security-review.txt', 'utf8');
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: `## Security Review\n\n\`\`\`\n${review}\n\`\`\``
+            });

@@ -281,6 +281,7 @@
         <li><a href="#discovery">🔍 AI-DLC Discovery (Negocio)</a></li>
         <li><a href="#specs">📐 Spec-Driven Development (Tech)</a></li>
         <li><a href="#superficies">🖥️ Superficies: IDE, CLI, Web</a></li>
+        <li><a href="#crew">🤖 Kiro Crew (agentes 24/7)</a></li>
         <li><a href="#recursos">🔗 Recursos</a></li>
     </ul>
 </nav>
@@ -357,6 +358,11 @@
     <div class="card">
         <div class="card-title">Custom Agents</div>
         <p>Configuraciones JSON reutilizables que definen un agente: su prompt, herramientas, permisos y recursos. Se guardan en <code>.kiro/agents/</code> y se comparten con el equipo.</p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">Kiro Crew</div>
+        <p>Espacio de trabajo persistente y <strong>open source</strong> (Apache 2.0) que corre sobre <code>kiro-cli</code>. Orquesta múltiples agentes, conserva el contexto entre sesiones, agenda trabajo recurrente y sigue corriendo aunque estés offline. Se usa desde app de escritorio, web, CLI o canales de mensajería (Slack, Discord, Teams…).</p>
     </div>
 
     <div class="card">
@@ -849,6 +855,46 @@ kiro-cli chat --no-interactive "prompt"
     </div>
 </section>
 
+<!-- KIRO CREW -->
+<section id="crew">
+    <h2>🤖 Kiro Crew — agentes que trabajan 24/7 <span class="badge badge-tech">Tech</span></h2>
+    <p>Más allá del IDE, la CLI y la Web, Kiro suma <strong>Crew</strong>: un espacio de trabajo persistente y autónomo que mantiene a los agentes trabajando incluso cuando no estás frente a la pantalla. Es <strong>open source (Apache 2.0)</strong> y corre sobre <code>kiro-cli</code>, el mismo motor detrás del resto de los productos Kiro.</p>
+
+    <h3>¿Qué es?</h3>
+    <p>Una capa de orquestación que coordina múltiples agentes, conserva el contexto entre sesiones, agenda trabajo recurrente y sigue corriendo mientras estás offline. Se ejecuta <strong>localmente en tu máquina o en un servidor propio</strong> (local o remoto, sobre tu hardware). Es persistente, se auto-aprende y evoluciona: recuerda el contexto entre sesiones y convierte tus correcciones en lecciones que perduran.</p>
+
+    <h3>¿Para qué sirve?</h3>
+    <table>
+        <thead><tr><th>Escenario</th><th>Qué hace Crew</th></tr></thead>
+        <tbody>
+            <tr><td><strong>Cola de tickets</strong></td><td>Hace triage y despacho, identifica responsables y marca lo que necesita tu atención.</td></tr>
+            <tr><td><strong>Incidente entre repos</strong></td><td>Investiga en paralelo mientras vos te concentrás en el fix.</td></tr>
+            <tr><td><strong>Migraciones largas</strong></td><td>Avanza por checkpoints y reintentos mientras estás en una reunión o dormido.</td></tr>
+            <tr><td><strong>Trabajo recurrente</strong></td><td>Agenda tareas programadas (cron) y reacciona a eventos vía webhooks.</td></tr>
+        </tbody>
+    </table>
+
+    <h3>¿Desde dónde se usa?</h3>
+    <p>Podés trabajar con Crew desde la <strong>app de escritorio</strong>, un <strong>dashboard web</strong>, la <strong>CLI/TUI</strong>, o continuar la misma tarea desde canales de mensajería: <strong>Slack, Discord, Telegram, Teams, Webex, WeCom y WeChat</strong>.</p>
+
+    <div class="card">
+        <div class="card-title">🚀 Arranque rápido</div>
+        <p>Crew corre local. Tras instalarlo, levantás el gateway y abrís el dashboard en <code>http://localhost:5476</code>; el primer arranque te guía para instalar <code>kiro-cli</code> y completar el sign-in. Soporta macOS, Linux (x86_64 y ARM) y Windows; requiere Python 3.9+ para instalar desde el código fuente.</p>
+        <p style="margin-top: 0.5rem;"><a href="https://kiro.dev/docs/crew/installation/" target="_blank" style="color: var(--accent-cyan);">📖 Guía de instalación</a></p>
+    </div>
+
+    <div class="card">
+        <div class="card-title">💡 ¿En qué se diferencia de Kiro Web?</div>
+        <p><strong>Kiro Web</strong> corre sesiones en un sandbox en la nube de Kiro. <strong>Crew</strong> corre en tu propia infraestructura (local o servidor propio), es open source y está pensado para agentes persistentes y autónomos que mantienen estado, agenda y checkpoints a lo largo del tiempo.</p>
+    </div>
+
+    <h3>Descargar / empezar</h3>
+    <a href="https://github.com/kirodotdev/KiroCrew" class="link-card" target="_blank">⬇️ Repo open source (GitHub)</a>
+    <a href="https://kiro.dev/crew/" class="link-card" target="_blank">🌐 Kiro Crew (sitio)</a>
+    <a href="https://kiro.dev/docs/crew/" class="link-card" target="_blank">📚 Docs de Crew</a>
+    <a href="https://kiro.dev/blog/introducing-kiro-crew/" class="link-card" target="_blank">📝 Blog: Introducing Kiro Crew</a>
+</section>
+
 <!-- RECURSOS -->
 <section id="recursos">
     <h2>🔗 Recursos</h2>
@@ -884,6 +930,7 @@ kiro-cli chat --no-interactive "prompt"
     <a href="https://kiro.dev/downloads/" class="link-card" target="_blank">⬇️ Kiro IDE</a>
     <a href="https://kiro.dev/cli/" class="link-card" target="_blank">⬇️ Kiro CLI</a>
     <a href="https://app.kiro.dev" class="link-card" target="_blank">🌍 Kiro Web</a>
+    <a href="https://github.com/kirodotdev/KiroCrew" class="link-card" target="_blank">⬇️ Kiro Crew (open source)</a>
 
     <h3 style="page-break-before: always;">Planes de Kiro</h3>
     <table>

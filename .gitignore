@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# Artefactos empaquetados para envio a clientes (no publicar)
+*.zip
+
 # Documentos en refinamiento (aun no publicar)
 kiro-govern/mcp-governance/playbook-kiro-registry-implementacion.md
 kiro-govern/mcp-governance/reporte-pypi-registry-connection.md
